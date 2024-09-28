@@ -10,14 +10,16 @@ import SwiftUI
 struct ContentView: View {
     @Binding var stock: Stock
     @State private var showingEditView = false
-
+    @State private var showingStrategySettingsView = false
+    @State private var strategySettings = StrategySettings.default
+    
     var body: some View {
         VStack {
             Text("~Stock price calc~").font(.footnote)
             
             header
             priceTargetsPanel
-
+            
             VStack {
                 HStack {
                     Text("Profit taking").font(.title3)
@@ -41,6 +43,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingEditView) {
             StockEditView(stock: $stock)
+        }
+        .sheet(isPresented: $showingStrategySettingsView) {
+            StrategySettingsView(settings: $strategySettings)
         }
     }
     
@@ -75,7 +80,7 @@ struct ContentView: View {
 
     private var priceTargetsPanel: some View {
         HStack {
-            Button(action: { showingEditView = true }) {
+            Button(action: { showingStrategySettingsView = true }) {
                 Image(systemName: "gearshape.fill")
             }
             .labelStyle(.iconOnly)
@@ -88,29 +93,33 @@ struct ContentView: View {
 
     private var profitTakingTargets: some View {
         VStack {
-            Text(String(format: "%.2f", stock.averagePrice * 1.025)).font(.title3)
-            Text("2.5% of gain, 25% of the position size").font(.footnote)
-            
-            Spacer()
-                .frame(height: 10)
-            
-            Text(String(format: "%.2f", stock.averagePrice * 1.05)).font(.title3)
-            Text("5% of gain, 25% of the position size").font(.footnote)
+            ForEach(strategySettings.profitTakingTargets, id: \.percentage) { target in
+                let targetPrice = stock.averagePrice * (1 + target.percentage / 100)
+                Text(String(format: "%.2f", targetPrice)).font(.title3)
+                Text("\(String(format: "%.1f", target.percentage))% of gain, \(String(format: "%.1f", target.allocation))% of the position size").font(.footnote)
+                
+                Spacer().frame(height: 10)
+            }
         }
         .padding()
     }
 
     private var stopLossTargets: some View {
         VStack {
-            Text(String(format: "%.2f", stock.averagePrice * 0.98)).font(.title3)
-            Text("2% of loss, 50% of the position size").font(.footnote)
+            ForEach(strategySettings.stopLossTargets, id: \.percentage) { target in
+                let targetPrice = stock.averagePrice * (1 - target.percentage / 100)
+                Text(String(format: "%.2f", targetPrice)).font(.title3)
+                Text("\(String(format: "%.1f", target.percentage))% of loss, \(String(format: "%.1f", target.allocation))% of the position size").font(.footnote)
+                
+                Spacer().frame(height: 10)
+            }
         }
         .padding()
     }
 }
 
-//struct ContentView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContentView()
-//    }
-//}
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView(stock: .constant(Stock(name: "", averagePrice: 0.0, sharesAmount: 0)))
+    }
+}

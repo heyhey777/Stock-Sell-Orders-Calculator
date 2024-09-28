@@ -16,7 +16,6 @@ struct StockEditView: View {
 
     enum Field: Hashable {
         case stockName, averagePrice, sharesAmount
-        //case stockName, averagePrice, sharesAmount, notes
     }
 
     init(stock: Binding<Stock>) {
@@ -44,17 +43,6 @@ struct StockEditView: View {
                     ))
                     .focused($focusedField, equals: .sharesAmount)
                     .keyboardType(.numberPad)
-                    
-//                    VStack(alignment: .leading) {
-//                        Text("Notes")
-//                            .font(.headline)
-//                        TextEditor(text: $tempStock.notes)
-//                            .frame(height: 100)
-//                            .padding(5)
-//                            .background(Color.white)
-//                            .cornerRadius(8)
-//                            .focused($focusedField, equals: .notes)
-//                    }
                     
                     Button(action: continueAction) {
                         Text("Continue")
@@ -108,8 +96,8 @@ struct StockEditView: View {
     }
 }
 
-//struct StockEditView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        StockEditView(stock: .constant(Stock(name: "", averagePrice: 0, sharesAmount: 0, notes: "")))
-//    }
-//}
+struct StockEditView_Previews: PreviewProvider {
+    static var previews: some View {
+        StockEditView(stock: .constant(Stock(name: "", averagePrice: 0, sharesAmount: 0)))
+    }
+}

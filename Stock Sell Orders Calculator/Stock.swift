@@ -11,5 +11,4 @@ struct Stock {
     var name: String
     var averagePrice: Double
     var sharesAmount: Int
-   // var notes: String
 }
