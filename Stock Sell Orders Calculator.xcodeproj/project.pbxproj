@@ -14,6 +14,8 @@
 		44C072A32CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072A22CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorTests.swift */; };
 		44C072AD2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072AC2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITests.swift */; };
 		44C072AF2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072AE2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITestsLaunchTests.swift */; };
+		44C072BE2CA8A10300DF16F2 /* StockEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072BD2CA8A10300DF16F2 /* StockEditView.swift */; };
+		44C072C02CA8A6EA00DF16F2 /* Stock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072BF2CA8A6EA00DF16F2 /* Stock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +47,8 @@
 		44C072A82CA81BC700DF16F2 /* Stock Sell Orders CalculatorUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Stock Sell Orders CalculatorUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		44C072AC2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stock_Sell_Orders_CalculatorUITests.swift; sourceTree = "<group>"; };
 		44C072AE2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stock_Sell_Orders_CalculatorUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		44C072BD2CA8A10300DF16F2 /* StockEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockEditView.swift; sourceTree = "<group>"; };
+		44C072BF2CA8A6EA00DF16F2 /* Stock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,8 @@
 			children = (
 				44C072902CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift */,
 				44C072922CA81BC300DF16F2 /* ContentView.swift */,
+				44C072BF2CA8A6EA00DF16F2 /* Stock.swift */,
+				44C072BD2CA8A10300DF16F2 /* StockEditView.swift */,
 				44C072942CA81BC700DF16F2 /* Assets.xcassets */,
 				44C072962CA81BC700DF16F2 /* Stock_Sell_Orders_Calculator.entitlements */,
 				44C072972CA81BC700DF16F2 /* Preview Content */,
@@ -261,6 +267,8 @@
 			files = (
 				44C072932CA81BC300DF16F2 /* ContentView.swift in Sources */,
 				44C072912CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift in Sources */,
+				44C072C02CA8A6EA00DF16F2 /* Stock.swift in Sources */,
+				44C072BE2CA8A10300DF16F2 /* StockEditView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -423,6 +431,7 @@
 				DEVELOPMENT_TEAM = R8PZKRLNDR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -460,6 +469,7 @@
 				DEVELOPMENT_TEAM = R8PZKRLNDR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
