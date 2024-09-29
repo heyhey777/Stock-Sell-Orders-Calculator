@@ -1,10 +1,3 @@
-//
-//  SwiftUIView.swift
-//  Stock Sell Orders Calculator
-//
-//  Created by Kate on 28/09/2024.
-//
-
 import SwiftUI
 
 struct StockEditView: View {
@@ -25,69 +18,76 @@ struct StockEditView: View {
     
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(spacing: 20) {
-                    inputField(title: "Stock Name", placeholder: "Enter stock name", binding: $tempStock.name)
-                        .focused($focusedField, equals: .stockName)
-                    
-                    inputField(title: "Average Price *", placeholder: "Enter average price", binding: Binding(
-                        get: { String(format: "%.2f", self.tempStock.averagePrice) },
-                        set: { if let value = Double($0) { self.tempStock.averagePrice = value } }
-                    ))
-                    .focused($focusedField, equals: .averagePrice)
-                    .keyboardType(.decimalPad)
-                    
-                    inputField(title: "Shares Amount *", placeholder: "Enter shares amount", binding: Binding(
-                        get: { String(self.tempStock.sharesAmount) },
-                        set: { if let value = Int($0) { self.tempStock.sharesAmount = value } }
-                    ))
-                    .focused($focusedField, equals: .sharesAmount)
-                    .keyboardType(.numberPad)
-                    
-                    Button(action: continueAction) {
-                        Text("Continue")
-                            .font(.headline)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .cornerRadius(10)
+            ZStack {
+                CustomBackground()
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        inputField(title: "Stock Name", placeholder: "Enter stock name", binding: $tempStock.name)
+                            .focused($focusedField, equals: .stockName)
+                        
+                        inputField(title: "Average Price, $", placeholder: "Enter average price", binding: Binding(
+                            get: { String(format: "%.2f", self.tempStock.averagePrice) },
+                            set: { if let value = Double($0) { self.tempStock.averagePrice = value } }
+                        ))
+                        .focused($focusedField, equals: .averagePrice)
+                        .keyboardType(.decimalPad)
+                        
+                        inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: Binding(
+                            get: { String(self.tempStock.sharesAmount) },
+                            set: { if let value = Double($0) { self.tempStock.sharesAmount = Int(value) } }
+                        ))
+                        .focused($focusedField, equals: .sharesAmount)
+                        .keyboardType(.decimalPad)
+                        
+                        Button(action: continueAction) {
+                            Text("Save Changes")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue.opacity(0.8))
+                                .cornerRadius(15)
+                                .shadow(color: .blue.opacity(0.3), radius: 10, x: 0, y: 5)
+                        }
+                        .padding(.top, 20)
                     }
-                    .padding(.bottom, 20)
+                    .padding()
                 }
-                .padding()
-            }
-            .navigationBarTitle("Edit Stock", displayMode: .inline)
-            .navigationBarItems(trailing: Button("Cancel") {
-                dismiss()
-            })
-            .alert(isPresented: $showAlert) {
-                Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
-            }
-            .toolbar {
-                ToolbarItem(placement: .keyboard) {
-                    Button("Done") {
-                        focusedField = nil
-                    }
+                .navigationBarTitle("Edit Stock", displayMode: .inline)
+                .navigationBarItems(trailing: Button("Cancel") {
+                    dismiss()
+                })
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
                 }
             }
         }
+        .navigationViewStyle(StackNavigationViewStyle())
     }
     
     private func inputField(title: String, placeholder: String, binding: Binding<String>) -> some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
+                .foregroundColor(.white)
+            
             TextField(placeholder, text: binding)
                 .padding()
-                .background(Color.white)
-                .cornerRadius(8)
+                .background(Color.white.opacity(0.2))
+                .cornerRadius(10)
+                .foregroundColor(.white)
+                .accentColor(.white)
                 .submitLabel(.next)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                )
         }
     }
     
     private func continueAction() {
-        if tempStock.averagePrice == 0 || tempStock.sharesAmount == 0 {
+        if tempStock.averagePrice <= 0 || tempStock.sharesAmount <= 0 {
             showAlert = true
         } else {
             stock = tempStock
@@ -96,8 +96,11 @@ struct StockEditView: View {
     }
 }
 
-struct StockEditView_Previews: PreviewProvider {
-    static var previews: some View {
-        StockEditView(stock: .constant(Stock(name: "", averagePrice: 0, sharesAmount: 0)))
+struct CustomBackground: View {
+    var body: some View {
+        LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.6)]),
+                       startPoint: .topLeading,
+                       endPoint: .bottomTrailing)
+            .edgesIgnoringSafeArea(.all)
     }
 }

@@ -15,11 +15,13 @@ struct Stock_Sell_Orders_CalculatorApp: App {
         WindowGroup {
             if appState.isFirstLaunch {
                 StockEditView(stock: $appState.stock)
+                    .background(Color.customBackground)
                     .onDisappear {
                         appState.isFirstLaunch = false
                     }
             } else {
                 ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
+                    .background(Color.customBackground)
             }
         }
     }

@@ -18,6 +18,7 @@
 		44C072C02CA8A6EA00DF16F2 /* Stock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072BF2CA8A6EA00DF16F2 /* Stock.swift */; };
 		44C072C22CA8B00F00DF16F2 /* StrategySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */; };
 		44C072C42CA8B03900DF16F2 /* StrategySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C32CA8B03900DF16F2 /* StrategySettings.swift */; };
+		44C072C62CA9B4C000DF16F2 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -53,6 +54,7 @@
 		44C072BF2CA8A6EA00DF16F2 /* Stock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stock.swift; sourceTree = "<group>"; };
 		44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategySettingsView.swift; sourceTree = "<group>"; };
 		44C072C32CA8B03900DF16F2 /* StrategySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategySettings.swift; sourceTree = "<group>"; };
+		44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorScheme.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,6 +107,7 @@
 			children = (
 				44C072902CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift */,
 				44C072922CA81BC300DF16F2 /* ContentView.swift */,
+				44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */,
 				44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */,
 				44C072C32CA8B03900DF16F2 /* StrategySettings.swift */,
 				44C072BF2CA8A6EA00DF16F2 /* Stock.swift */,
@@ -274,6 +277,7 @@
 				44C072932CA81BC300DF16F2 /* ContentView.swift in Sources */,
 				44C072912CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift in Sources */,
 				44C072C22CA8B00F00DF16F2 /* StrategySettingsView.swift in Sources */,
+				44C072C62CA9B4C000DF16F2 /* ColorScheme.swift in Sources */,
 				44C072C42CA8B03900DF16F2 /* StrategySettings.swift in Sources */,
 				44C072C02CA8A6EA00DF16F2 /* Stock.swift in Sources */,
 				44C072BE2CA8A10300DF16F2 /* StockEditView.swift in Sources */,
@@ -439,6 +443,7 @@
 				DEVELOPMENT_TEAM = R8PZKRLNDR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sell Smart";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -477,6 +482,7 @@
 				DEVELOPMENT_TEAM = R8PZKRLNDR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Sell Smart";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
