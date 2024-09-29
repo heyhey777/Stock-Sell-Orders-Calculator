@@ -15,31 +15,13 @@ struct ContentView: View {
     
     var body: some View {
         VStack {
-            Text("~Stock price calc~").font(.footnote)
-            
+            Image("logo1")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .scaleEffect(0.5)
             header
-            priceTargetsPanel
-            
-            VStack {
-                HStack {
-                    Text("Profit taking").font(.title3)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.leading, 45)
-           
-            profitTakingTargets
-            
-            VStack {
-                HStack {
-                    Text("Stop loss").font(.title3)
-                    Spacer()
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            .padding(.leading, 45)
-            
-            stopLossTargets
+            priceTargetsArea
+
         }
         .sheet(isPresented: $showingEditView) {
             StockEditView(stock: $stock)
@@ -51,33 +33,71 @@ struct ContentView: View {
     
     private var header: some View {
         ZStack {
-            Rectangle().fill(.purple.opacity(0.1))
+//            Image("briefcase").resizable()
+//                .aspectRatio(contentMode: .fit)
+//                .foregroundColor(.blue)
             
-            Text(stock.name.isEmpty ? "No stock selected" : stock.name).font(.subheadline)
-            
-            HStack {
-                VStack {
-                    Image(systemName: "dollarsign.circle.fill")
-                        .imageScale(.large)
-                        .foregroundColor(.orange)
-                    Text("Average price").font(.subheadline)
-                    Text(String(format: "%.2f", stock.averagePrice)).font(.body)
+            VStack {
+                Text(stock.name.isEmpty ? "Your stock" : stock.name).font(.subheadline)
+                    .padding(.horizontal)
+                
+                HStack {
+                    VStack {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .imageScale(.large)
+                            .foregroundColor(.orange)
+                        Text("Average price").font(.subheadline)
+                        Text(String(format: "%.2f", stock.averagePrice)).font(.body)
+                    }
+                    
+                    
+                    VStack {
+                        Image(systemName: "basket.fill")
+                            .imageScale(.large)
+                            .foregroundColor(.orange)
+                        Text("Shares amount").font(.subheadline)
+                        Text("\(stock.sharesAmount)").font(.body)
+                    }
                 }
                 .onTapGesture {
                     showingEditView = true
                 }
-                
-                VStack {
-                    Image(systemName: "basket.fill")
-                        .imageScale(.large)
-                        .foregroundColor(.orange)
-                    Text("Shares amount").font(.subheadline)
-                    Text("\(stock.sharesAmount)").font(.body)
-                }
             }
         }
     }
-
+    
+    private var priceTargetsArea: some View {
+        ZStack {
+            RoundedRectangle(cornerSize: /*@START_MENU_TOKEN@*/CGSize(width: 20, height: 10)/*@END_MENU_TOKEN@*/).fill(.purple.opacity(0.1))
+            
+            VStack {
+                priceTargetsPanel
+                
+                
+                VStack {
+                    HStack {
+                        Text("Profit taking").font(.title3)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.leading, 45)
+                
+                profitTakingTargets
+                
+                VStack {
+                    HStack {
+                        Text("Stop loss").font(.title3)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                .padding(.leading, 45)
+                
+                stopLossTargets
+            }
+        }
+    }
+    
     private var priceTargetsPanel: some View {
         HStack {
             Button(action: { showingStrategySettingsView = true }) {
@@ -90,7 +110,7 @@ struct ContentView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
     }
-
+    
     private var profitTakingTargets: some View {
         VStack {
             ForEach(strategySettings.profitTakingTargets, id: \.percentage) { target in
@@ -103,7 +123,7 @@ struct ContentView: View {
         }
         .padding()
     }
-
+    
     private var stopLossTargets: some View {
         VStack {
             ForEach(strategySettings.stopLossTargets, id: \.percentage) { target in

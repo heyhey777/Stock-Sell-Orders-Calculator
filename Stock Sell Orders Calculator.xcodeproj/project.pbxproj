@@ -83,8 +83,6 @@
 		44C072842CA81BC300DF16F2 = {
 			isa = PBXGroup;
 			children = (
-				44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */,
-				44C072C32CA8B03900DF16F2 /* StrategySettings.swift */,
 				44C0728F2CA81BC300DF16F2 /* Stock Sell Orders Calculator */,
 				44C072A12CA81BC700DF16F2 /* Stock Sell Orders CalculatorTests */,
 				44C072AB2CA81BC700DF16F2 /* Stock Sell Orders CalculatorUITests */,
@@ -107,6 +105,8 @@
 			children = (
 				44C072902CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift */,
 				44C072922CA81BC300DF16F2 /* ContentView.swift */,
+				44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */,
+				44C072C32CA8B03900DF16F2 /* StrategySettings.swift */,
 				44C072BF2CA8A6EA00DF16F2 /* Stock.swift */,
 				44C072BD2CA8A10300DF16F2 /* StockEditView.swift */,
 				44C072942CA81BC700DF16F2 /* Assets.xcassets */,
