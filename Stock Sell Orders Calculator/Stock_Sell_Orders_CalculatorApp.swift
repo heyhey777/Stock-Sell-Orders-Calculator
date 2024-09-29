@@ -9,6 +9,7 @@ import SwiftUI
 @main
 struct Stock_Sell_Orders_CalculatorApp: App {
     @StateObject private var appState = AppState()
+    @StateObject private var strategySettingsManager = StrategySettingsManager()
 
     var body: some Scene {
         WindowGroup {
@@ -18,7 +19,7 @@ struct Stock_Sell_Orders_CalculatorApp: App {
                         appState.isFirstLaunch = false
                     }
             } else {
-                ContentView(stock: $appState.stock)
+                ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
             }
         }
     }
@@ -31,7 +32,6 @@ class AppState: ObservableObject {
     init() {
         self.isFirstLaunch = UserDefaults.standard.bool(forKey: "hasLaunchedBefore") == false
         self.stock = Stock(name: "", averagePrice: 0.0, sharesAmount: 0)
-//        self.stock = Stock(name: "", averagePrice: 0.0, sharesAmount: 0, notes: "")
 
         if isFirstLaunch {
             UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")

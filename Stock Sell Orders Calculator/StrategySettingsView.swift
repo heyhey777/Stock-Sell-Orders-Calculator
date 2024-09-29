@@ -8,90 +8,57 @@
 import SwiftUI
 
 struct StrategySettingsView: View {
-    @Binding var settings: StrategySettings
-    @Environment(\.dismiss) private var dismiss
+    @StateObject private var settingsManager = StrategySettingsManager()
     @State private var totalAllocation: Double = 0
     @State private var showingAllocationWarning = false
+    @State private var newSetupName = ""
+    @State private var showingSaveAlert = false
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         NavigationView {
             Form {
-                Section(header: Text("Stop Loss Targets")) {
-                    ForEach($settings.stopLossTargets) { $target in
-                        HStack {
-                            TextField("Loss %", text: Binding(
-                                get: { String(format: "%.2f", target.percentage) },
-                                set: { target.percentage = Double($0) ?? 0 }
-                            ))
-                            .keyboardType(.decimalPad)
-                            Text("%")
-                            Spacer()
-                            TextField("Allocation", text: Binding(
-                                get: { String(format: "%.2f", target.allocation) },
-                                set: {
-                                    target.allocation = Double($0) ?? 0
-                                    updateTotalAllocation()
-                                }
-                            ))
-                            .keyboardType(.decimalPad)
-                            Text("%")
-                            if settings.stopLossTargets.count > 1 {
-                                Button(action: {
-                                    if let index = settings.stopLossTargets.firstIndex(where: { $0.id == target.id }) {
-                                        settings.stopLossTargets.remove(at: index)
-                                        updateTotalAllocation()
-                                    }
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                        }
+                Section(header: Text("Presets")) {
+                    Button("Reset to Default") {
+                        settingsManager.currentSettings = .default
+                        updateTotalAllocation()
                     }
                     
-                    if settings.stopLossTargets.count < 3 {
+                    ForEach(settingsManager.savedSettings) { savedSetting in
+                        Button(savedSetting.name) {
+                            settingsManager.currentSettings = savedSetting
+                            updateTotalAllocation()
+                        }
+                    }
+                    .onDelete(perform: deleteSettings)
+                }
+                
+                Section(header: Text("Stop Loss Targets")) {
+                    ForEach($settingsManager.currentSettings.stopLossTargets) { $target in
+                        TargetRow(target: $target, isStopLoss: true, onDelete: {
+                            settingsManager.currentSettings.stopLossTargets.removeAll { $0.id == target.id }
+                            updateTotalAllocation()
+                        })
+                    }
+                    
+                    if settingsManager.currentSettings.stopLossTargets.count < 3 {
                         Button("Add Stop Loss Target") {
-                            settings.stopLossTargets.append(StrategySettings.Target(percentage: 0, allocation: 0))
+                            settingsManager.currentSettings.stopLossTargets.append(StrategySettings.Target(percentage: 0, allocation: 0))
                         }
                     }
                 }
                 
                 Section(header: Text("Profit Taking Targets")) {
-                    ForEach($settings.profitTakingTargets) { $target in
-                        HStack {
-                            TextField("Gain %", text: Binding(
-                                get: { String(format: "%.2f", target.percentage) },
-                                set: { target.percentage = Double($0) ?? 0 }
-                            ))
-                            .keyboardType(.decimalPad)
-                            Text("%")
-                            Spacer()
-                            TextField("Allocation", text: Binding(
-                                get: { String(format: "%.2f", target.allocation) },
-                                set: {
-                                    target.allocation = Double($0) ?? 0
-                                    updateTotalAllocation()
-                                }
-                            ))
-                            .keyboardType(.decimalPad)
-                            Text("%")
-                            if settings.profitTakingTargets.count > 1 {
-                                Button(action: {
-                                    if let index = settings.profitTakingTargets.firstIndex(where: { $0.id == target.id }) {
-                                        settings.profitTakingTargets.remove(at: index)
-                                        updateTotalAllocation()
-                                    }
-                                }) {
-                                    Image(systemName: "minus.circle.fill")
-                                        .foregroundColor(.red)
-                                }
-                            }
-                        }
+                    ForEach($settingsManager.currentSettings.profitTakingTargets) { $target in
+                        TargetRow(target: $target, isStopLoss: false, onDelete: {
+                            settingsManager.currentSettings.profitTakingTargets.removeAll { $0.id == target.id }
+                            updateTotalAllocation()
+                        })
                     }
                     
-                    if settings.profitTakingTargets.count < 3 {
+                    if settingsManager.currentSettings.profitTakingTargets.count < 3 {
                         Button("Add Profit Taking Target") {
-                            settings.profitTakingTargets.append(StrategySettings.Target(percentage: 0, allocation: 0))
+                            settingsManager.currentSettings.profitTakingTargets.append(StrategySettings.Target(percentage: 0, allocation: 0))
                         }
                     }
                 }
@@ -100,15 +67,33 @@ struct StrategySettingsView: View {
                     Text("Total Allocation: \(totalAllocation, specifier: "%.2f")%")
                         .foregroundColor(totalAllocation > 100 ? .red : .primary)
                 }
+                
+                Section {
+                    Button("Save Current Setup") {
+                        showingSaveAlert = true
+                    }
+                }
             }
             .navigationTitle("Strategy Settings")
-            .navigationBarItems(trailing: Button("Save") {
+            .navigationBarItems(trailing: Button("Done") {
                 if totalAllocation <= 100 {
                     dismiss()
                 } else {
                     showingAllocationWarning = true
                 }
             })
+            .alert("Save Setup", isPresented: $showingSaveAlert) {
+                TextField("Setup Name", text: $newSetupName)
+                Button("Save") {
+                    if !newSetupName.isEmpty {
+                        settingsManager.saveCurrentSettings(name: newSetupName)
+                        newSetupName = ""
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Enter a name for your current setup")
+            }
             .alert(isPresented: $showingAllocationWarning) {
                 Alert(
                     title: Text("Invalid Allocation"),
@@ -123,13 +108,41 @@ struct StrategySettingsView: View {
     }
     
     private func updateTotalAllocation() {
-        totalAllocation = settings.stopLossTargets.reduce(0) { $0 + $1.allocation } +
-                          settings.profitTakingTargets.reduce(0) { $0 + $1.allocation }
+        totalAllocation = settingsManager.currentSettings.stopLossTargets.reduce(0) { $0 + $1.allocation } +
+                          settingsManager.currentSettings.profitTakingTargets.reduce(0) { $0 + $1.allocation }
+    }
+    
+    private func deleteSettings(at offsets: IndexSet) {
+        offsets.forEach { index in
+            settingsManager.deleteSavedSettings(at: index)
+        }
+    }
+}
+
+struct TargetRow: View {
+    @Binding var target: StrategySettings.Target
+    let isStopLoss: Bool
+    let onDelete: () -> Void
+    
+    var body: some View {
+        HStack {
+            TextField(isStopLoss ? "Loss %" : "Gain %", value: $target.percentage, format: .number)
+                .keyboardType(.decimalPad)
+            Text("%")
+            Spacer()
+            TextField("Allocation", value: $target.allocation, format: .number)
+                .keyboardType(.decimalPad)
+            Text("%")
+            Button(action: onDelete) {
+                Image(systemName: "minus.circle.fill")
+                    .foregroundColor(.red)
+            }
+        }
     }
 }
 
 struct StrategySettingsView_Previews: PreviewProvider {
     static var previews: some View {
-        StrategySettingsView(settings: .constant(StrategySettings.default))
+        StrategySettingsView()
     }
 }

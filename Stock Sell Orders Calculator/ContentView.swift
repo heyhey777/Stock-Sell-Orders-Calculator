@@ -9,9 +9,9 @@ import SwiftUI
 
 struct ContentView: View {
     @Binding var stock: Stock
+    @ObservedObject var strategySettingsManager: StrategySettingsManager
     @State private var showingEditView = false
     @State private var showingStrategySettingsView = false
-    @State private var strategySettings = StrategySettings.default
     
     var body: some View {
         VStack {
@@ -21,22 +21,17 @@ struct ContentView: View {
                 .scaleEffect(0.5)
             header
             priceTargetsArea
-
         }
         .sheet(isPresented: $showingEditView) {
             StockEditView(stock: $stock)
         }
         .sheet(isPresented: $showingStrategySettingsView) {
-            StrategySettingsView(settings: $strategySettings)
+            StrategySettingsView()
         }
     }
     
     private var header: some View {
         ZStack {
-//            Image("briefcase").resizable()
-//                .aspectRatio(contentMode: .fit)
-//                .foregroundColor(.blue)
-            
             VStack {
                 Text(stock.name.isEmpty ? "Your stock" : stock.name).font(.subheadline)
                     .padding(.horizontal)
@@ -49,7 +44,6 @@ struct ContentView: View {
                         Text("Average price").font(.subheadline)
                         Text(String(format: "%.2f", stock.averagePrice)).font(.body)
                     }
-                    
                     
                     VStack {
                         Image(systemName: "basket.fill")
@@ -68,11 +62,10 @@ struct ContentView: View {
     
     private var priceTargetsArea: some View {
         ZStack {
-            RoundedRectangle(cornerSize: /*@START_MENU_TOKEN@*/CGSize(width: 20, height: 10)/*@END_MENU_TOKEN@*/).fill(.purple.opacity(0.1))
+            RoundedRectangle(cornerSize: CGSize(width: 20, height: 10)).fill(.purple.opacity(0.1))
             
             VStack {
                 priceTargetsPanel
-                
                 
                 VStack {
                     HStack {
@@ -113,7 +106,7 @@ struct ContentView: View {
     
     private var profitTakingTargets: some View {
         VStack {
-            ForEach(strategySettings.profitTakingTargets, id: \.percentage) { target in
+            ForEach(strategySettingsManager.currentSettings.profitTakingTargets) { target in
                 let targetPrice = stock.averagePrice * (1 + target.percentage / 100)
                 Text(String(format: "%.2f", targetPrice)).font(.title3)
                 Text("\(String(format: "%.1f", target.percentage))% of gain, \(String(format: "%.1f", target.allocation))% of the position size").font(.footnote)
@@ -126,7 +119,7 @@ struct ContentView: View {
     
     private var stopLossTargets: some View {
         VStack {
-            ForEach(strategySettings.stopLossTargets, id: \.percentage) { target in
+            ForEach(strategySettingsManager.currentSettings.stopLossTargets) { target in
                 let targetPrice = stock.averagePrice * (1 - target.percentage / 100)
                 Text(String(format: "%.2f", targetPrice)).font(.title3)
                 Text("\(String(format: "%.1f", target.percentage))% of loss, \(String(format: "%.1f", target.allocation))% of the position size").font(.footnote)
@@ -140,6 +133,7 @@ struct ContentView: View {
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView(stock: .constant(Stock(name: "", averagePrice: 0.0, sharesAmount: 0)))
+        ContentView(stock: .constant(Stock(name: "", averagePrice: 0.0, sharesAmount: 0)),
+                    strategySettingsManager: StrategySettingsManager())
     }
 }
