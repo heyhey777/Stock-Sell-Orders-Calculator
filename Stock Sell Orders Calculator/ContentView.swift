@@ -11,17 +11,21 @@ struct ContentView: View {
         ZStack(alignment: .top) {
             Color.appBackground.edgesIgnoringSafeArea(.all)
             
-            logoArea
-
-            ScrollView {
-                VStack(spacing: 20) {
-                    header
-                    priceTargetsArea
-                    Spacer(minLength: 20)
-                    restorePurchaseButton
+            VStack(spacing: 0) {
+                logoArea
+                    .background(Color.appBackground)
+                    .zIndex(1)
+                
+                ScrollView {
+                    VStack(spacing: 20) {
+                        header
+                        priceTargetsArea
+                        Spacer(minLength: 20)
+                        restorePurchaseButton
+                    }
+                    .padding(.bottom, 20)
+                    .padding(.top, 20)
                 }
-                .padding(.bottom, 20)
-                .padding(.top, 60)
             }
         }
         .sheet(isPresented: $showingEditView) {
@@ -38,6 +42,12 @@ struct ContentView: View {
             .aspectRatio(contentMode: .fit)
             .frame(height: 40)
             .padding(.top, 15)
+            .padding(.bottom, 10)
+            .background(
+                Rectangle()
+                    .fill(Color.appBackground)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+            )
     }
     
     private var header: some View {

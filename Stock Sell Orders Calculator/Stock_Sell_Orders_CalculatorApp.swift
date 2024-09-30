@@ -1,9 +1,3 @@
-//
-//  Stock_Sell_Orders_CalculatorApp.swift
-//  Stock Sell Orders Calculator
-//
-//  Created by Kate on 28/09/2024.
-//
 import SwiftUI
 
 @main
@@ -15,13 +9,13 @@ struct Stock_Sell_Orders_CalculatorApp: App {
         WindowGroup {
             if appState.isFirstLaunch {
                 StockEditView(stock: $appState.stock)
-                    .background(Color.customBackground)
+                    .background(Color.appBackground)
                     .onDisappear {
                         appState.isFirstLaunch = false
                     }
             } else {
                 ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
-                    .background(Color.customBackground)
+                    .background(Color.appBackground)
             }
         }
     }

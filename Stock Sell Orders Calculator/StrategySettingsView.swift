@@ -7,7 +7,6 @@ struct StrategySettingsView: View {
     @State private var newSetupName = ""
     @State private var showingSaveAlert = false
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         NavigationView {
@@ -75,7 +74,7 @@ struct StrategySettingsView: View {
                 .foregroundColor(.secondary)
             Text("\(totalAllocation, specifier: "%.2f")%")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
-                .foregroundColor(totalAllocation > 100 ? .red : (colorScheme == .dark ? .white : .black))
+                .foregroundColor(totalAllocation > 100 ? .red : .primary)
         }
         .frame(maxWidth: .infinity)
         .padding()
@@ -98,6 +97,8 @@ struct StrategySettingsView: View {
                         targets.wrappedValue.removeAll { $0.id == target.id }
                         updateTotalAllocation()
                     }
+                }, onUpdate: {
+                    updateTotalAllocation()
                 })
             }
             
@@ -123,11 +124,11 @@ struct StrategySettingsView: View {
     
     private var presetsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Presets")
+            Text("Saved Strategies")
                 .font(.title3)
                 .fontWeight(.bold)
             
-            Button("Reset to Default") {
+            Button("Default") {
                 withAnimation {
                     settingsManager.currentSettings = .default
                     updateTotalAllocation()
@@ -135,16 +136,28 @@ struct StrategySettingsView: View {
             }
             .buttonStyle(ModernButtonStyle())
             
-            ForEach(settingsManager.savedSettings) { savedSetting in
-                Button(savedSetting.name) {
-                    withAnimation {
-                        settingsManager.currentSettings = savedSetting
-                        updateTotalAllocation()
+            ForEach(settingsManager.savedSettings.indices, id: \.self) { index in
+                HStack {
+                    Button(settingsManager.savedSettings[index].name) {
+                        withAnimation {
+                            settingsManager.currentSettings = settingsManager.savedSettings[index]
+                            updateTotalAllocation()
+                        }
+                    }
+                    .buttonStyle(ModernButtonStyle())
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        withAnimation {
+                            settingsManager.deleteSavedSettings(at: index)
+                        }
+                    }) {
+                        Image(systemName: "trash")
+                            .foregroundColor(.red)
                     }
                 }
-                .buttonStyle(ModernButtonStyle())
             }
-            .onDelete(perform: deleteSettings)
         }
         .padding()
         .background(
@@ -174,6 +187,7 @@ struct StrategySettingsView: View {
         totalAllocation = settingsManager.currentSettings.stopLossTargets.reduce(0) { $0 + $1.allocation } +
         settingsManager.currentSettings.profitTakingTargets.reduce(0) { $0 + $1.allocation }
     }
+
     
     private func deleteSettings(at offsets: IndexSet) {
         withAnimation {
@@ -188,6 +202,7 @@ struct TargetRow: View {
     @Binding var target: StrategySettings.Target
     let isStopLoss: Bool
     let onDelete: () -> Void
+    let onUpdate: () -> Void
     
     var body: some View {
         HStack(spacing: 16) {
@@ -198,6 +213,7 @@ struct TargetRow: View {
                 TextField("", value: $target.percentage, format: .number)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onChange(of: target.percentage) { _ in onUpdate() }
             }
             .frame(maxWidth: .infinity)
             
@@ -208,6 +224,7 @@ struct TargetRow: View {
                 TextField("", value: $target.allocation, format: .number)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .onChange(of: target.allocation) { _ in onUpdate() }
             }
             .frame(maxWidth: .infinity)
             

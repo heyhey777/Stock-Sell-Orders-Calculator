@@ -7,8 +7,16 @@
 
 import Foundation
 
-struct Stock {
+struct Stock: Codable, Identifiable {
+    let id: UUID
     var name: String
     var averagePrice: Double
     var sharesAmount: Int
+    
+    init(id: UUID = UUID(), name: String, averagePrice: Double, sharesAmount: Int) {
+        self.id = id
+        self.name = name
+        self.averagePrice = averagePrice
+        self.sharesAmount = sharesAmount
+    }
 }

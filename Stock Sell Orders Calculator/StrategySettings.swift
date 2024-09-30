@@ -1,17 +1,18 @@
-//
-//  StrategySettings.swift
-//  Stock Sell Orders Calculator
-//
-//  Created by Kate on 28/09/2024.
-//
-
 import Foundation
+import SwiftUI
 
 struct StrategySettings: Codable, Identifiable {
     let id: UUID
     var name: String
     var stopLossTargets: [Target]
     var profitTakingTargets: [Target]
+    
+    init(id: UUID = UUID(), name: String, stopLossTargets: [Target], profitTakingTargets: [Target]) {
+        self.id = id
+        self.name = name
+        self.stopLossTargets = stopLossTargets
+        self.profitTakingTargets = profitTakingTargets
+    }
     
     struct Target: Identifiable, Codable {
         let id: UUID
@@ -25,18 +26,19 @@ struct StrategySettings: Codable, Identifiable {
         }
     }
     
-    init(id: UUID = UUID(), name: String, stopLossTargets: [Target], profitTakingTargets: [Target]) {
-        self.id = id
-        self.name = name
-        self.stopLossTargets = stopLossTargets
-        self.profitTakingTargets = profitTakingTargets
+    static var `default`: StrategySettings {
+        StrategySettings(
+            name: "Default",
+            stopLossTargets: [
+                Target(percentage: 5, allocation: 25),
+                Target(percentage: 10, allocation: 25)
+            ],
+            profitTakingTargets: [
+                Target(percentage: 10, allocation: 25),
+                Target(percentage: 20, allocation: 25)
+            ]
+        )
     }
-    
-    static let `default` = StrategySettings(
-        name: "Default",
-        stopLossTargets: [Target(percentage: 5, allocation: 50)],
-        profitTakingTargets: [Target(percentage: 4, allocation: 25), Target(percentage: 7, allocation: 25)]
-    )
 }
 
 class StrategySettingsManager: ObservableObject {
@@ -64,6 +66,7 @@ class StrategySettingsManager: ObservableObject {
     }
     
     func deleteSavedSettings(at index: Int) {
+        guard index >= 0 && index < savedSettings.count else { return }
         savedSettings.remove(at: index)
         saveToDisk()
     }

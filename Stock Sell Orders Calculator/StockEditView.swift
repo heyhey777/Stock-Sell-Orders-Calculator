@@ -19,11 +19,11 @@ struct StockEditView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                CustomBackground()
+                Color.appBackground.edgesIgnoringSafeArea(.all)
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        inputField(title: "Stock Name", placeholder: "Enter stock name", binding: $tempStock.name)
+                        inputField(title: "Stock Name", placeholder: "Enter stock name (not mandatory)", binding: $tempStock.name)
                             .focused($focusedField, equals: .stockName)
                         
                         inputField(title: "Average Price, $", placeholder: "Enter average price", binding: Binding(
@@ -46,21 +46,20 @@ struct StockEditView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.blue.opacity(0.8))
-                                .cornerRadius(15)
-                                .shadow(color: .blue.opacity(0.3), radius: 10, x: 0, y: 5)
+                                .background(Color.blue)
+                                .cornerRadius(12)
                         }
                         .padding(.top, 20)
                     }
                     .padding()
                 }
-                .navigationBarTitle("Edit Stock", displayMode: .inline)
-                .navigationBarItems(trailing: Button("Cancel") {
-                    dismiss()
-                })
-                .alert(isPresented: $showAlert) {
-                    Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
-                }
+            }
+            .navigationBarTitle("Edit Stock", displayMode: .inline)
+            .navigationBarItems(trailing: Button("Cancel") {
+                dismiss()
+            })
+            .alert(isPresented: $showAlert) {
+                Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
@@ -70,18 +69,14 @@ struct StockEditView: View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
-                .foregroundColor(.white)
             
             TextField(placeholder, text: binding)
                 .padding()
-                .background(Color.white.opacity(0.2))
+                .background(Color.customRectangleFill)
                 .cornerRadius(10)
-                .foregroundColor(.white)
-                .accentColor(.white)
-                .submitLabel(.next)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                 )
         }
     }
@@ -93,14 +88,5 @@ struct StockEditView: View {
             stock = tempStock
             dismiss()
         }
-    }
-}
-
-struct CustomBackground: View {
-    var body: some View {
-        LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.6), Color.purple.opacity(0.6)]),
-                       startPoint: .topLeading,
-                       endPoint: .bottomTrailing)
-            .edgesIgnoringSafeArea(.all)
     }
 }
