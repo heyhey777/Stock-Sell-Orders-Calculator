@@ -9,15 +9,21 @@ import StoreKit
 
 @MainActor
 class Store: ObservableObject {
-    @Published private(set) var calculationsRemaining = 30
+    @Published private(set) var calculationsRemaining: Int {
+        didSet {
+            UserDefaults.standard.set(calculationsRemaining, forKey: "calculationsRemaining")
+        }
+    }
     @Published private(set) var isPurchased = false
     
     private let productId = "com.yourdomain.StockSellOrdersCalculator.FullAccess"
     private var transactionListener: Task<Void, Error>?
     
-    
-    
     init() {
+        self.calculationsRemaining = UserDefaults.standard.integer(forKey: "calculationsRemaining")
+        if self.calculationsRemaining == 0 {
+            self.calculationsRemaining = 30
+        }
         transactionListener = listenForTransactions()
         Task {
             await updatePurchaseStatus()

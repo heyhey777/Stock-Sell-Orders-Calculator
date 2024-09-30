@@ -2,10 +2,12 @@ import SwiftUI
 
 struct StrategySettingsView: View {
     @ObservedObject var settingsManager: StrategySettingsManager
+    @EnvironmentObject var store: Store
     @State private var totalAllocation: Double = 0
     @State private var showingAllocationWarning = false
     @State private var newSetupName = ""
     @State private var showingSaveAlert = false
+    @State private var showPurchaseView = false
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -24,36 +26,45 @@ struct StrategySettingsView: View {
                         presetsSection
                         
                         saveStrategyButton
+                        }
+                        .padding()
                     }
-                    .padding()
                 }
-            }
-            .navigationTitle("Strategy Settings")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Done") {
-                        if totalAllocation <= 100 {
-                            dismiss()
-                        } else {
-                            showingAllocationWarning = true
+                .navigationTitle("Strategy Settings")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button("Done") {
+                            if totalAllocation <= 100 {
+                                dismiss()
+                            } else {
+                                showingAllocationWarning = true
+                            }
+                        }
+                        .foregroundColor(.blue)
+                    }
+                }
+                .alert("Save Strategy", isPresented: $showingSaveAlert) {
+                    TextField("Strategy Name", text: $newSetupName)
+                    Button("Save") {
+                        if !newSetupName.isEmpty {
+                            Task {
+                                await settingsManager.saveCurrentSettings(name: newSetupName, store: store)
+                                newSetupName = ""
+                                if settingsManager.showPurchaseView {
+                                    settingsManager.showPurchaseView = false
+                                    showPurchaseView = true
+                                }
+                            }
                         }
                     }
-                    .foregroundColor(.blue)
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Enter a name for your current strategy")
                 }
-            }
-            .alert("Save Strategy", isPresented: $showingSaveAlert) {
-                TextField("Strategy Name", text: $newSetupName)
-                Button("Save") {
-                    if !newSetupName.isEmpty {
-                        settingsManager.saveCurrentSettings(name: newSetupName)
-                        newSetupName = ""
-                    }
+                .sheet(isPresented: $showPurchaseView) {
+                    PurchaseView()
                 }
-                Button("Cancel", role: .cancel) {}
-            } message: {
-                Text("Enter a name for your current strategy")
-            }
             .alert(isPresented: $showingAllocationWarning) {
                 Alert(
                     title: Text("Invalid Allocation"),
@@ -80,7 +91,7 @@ struct StrategySettingsView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color.customBackground)
+                .fill(Color.customRectangleFill)
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         )
     }
@@ -236,7 +247,7 @@ struct TargetRow: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color.customRectangleFill)
+                .fill(Color.customBackground)
         )
     }
 }

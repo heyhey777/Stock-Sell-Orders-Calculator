@@ -45,8 +45,10 @@ class StrategySettingsManager: ObservableObject {
     @Published var currentSettings: StrategySettings
     @Published var savedSettings: [StrategySettings]
     
-    private let maxSavedSettings = 5
+    private let maxSavedSettings = 3
     private let saveKey = "savedStrategySettings"
+    
+    @Published var showPurchaseView = false
     
     init() {
         self.currentSettings = StrategySettings.default
@@ -54,15 +56,16 @@ class StrategySettingsManager: ObservableObject {
         loadSavedSettings()
     }
     
-    func saveCurrentSettings(name: String) {
-        let newSettings = StrategySettings(name: name, stopLossTargets: currentSettings.stopLossTargets, profitTakingTargets: currentSettings.profitTakingTargets)
-        
-        if savedSettings.count >= maxSavedSettings {
-            savedSettings.removeFirst()
+    func saveCurrentSettings(name: String, store: Store) async {
+        if await store.isPurchased || savedSettings.count < maxSavedSettings {
+            let newSettings = StrategySettings(name: name, stopLossTargets: currentSettings.stopLossTargets, profitTakingTargets: currentSettings.profitTakingTargets)
+            savedSettings.append(newSettings)
+            saveToDisk()
+        } else {
+            await MainActor.run {
+                showPurchaseView = true
+            }
         }
-        
-        savedSettings.append(newSettings)
-        saveToDisk()
     }
     
     func deleteSavedSettings(at index: Int) {

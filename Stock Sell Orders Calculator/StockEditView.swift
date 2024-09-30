@@ -8,6 +8,8 @@ struct StockEditView: View {
     @State private var showAlert = false
     @FocusState private var focusedField: Field?
     @State private var showingPurchaseView = false
+    @State private var averagePriceString: String
+    @State private var sharesAmountString: String
 
     enum Field: Hashable {
         case stockName, averagePrice, sharesAmount
@@ -16,6 +18,8 @@ struct StockEditView: View {
     init(stock: Binding<Stock>) {
         self._stock = stock
         self._tempStock = State(initialValue: stock.wrappedValue)
+        self._averagePriceString = State(initialValue: stock.wrappedValue.averagePrice == 0 ? "" : String(format: "%.2f", stock.wrappedValue.averagePrice))
+        self._sharesAmountString = State(initialValue: stock.wrappedValue.sharesAmount == 0 ? "" : "\(stock.wrappedValue.sharesAmount)")
     }
     
     var body: some View {
@@ -28,19 +32,23 @@ struct StockEditView: View {
                         inputField(title: "Stock Name", placeholder: "Enter stock name (not mandatory)", binding: $tempStock.name)
                             .focused($focusedField, equals: .stockName)
                         
-                        inputField(title: "Average Price, $", placeholder: "Enter average price", binding: Binding(
-                            get: { String(format: "%.2f", self.tempStock.averagePrice) },
-                            set: { if let value = Double($0) { self.tempStock.averagePrice = value } }
-                        ))
-                        .focused($focusedField, equals: .averagePrice)
-                        .keyboardType(.decimalPad)
+                        inputField(title: "Average Price, $", placeholder: "Enter average price", binding: $averagePriceString)
+                            .focused($focusedField, equals: .averagePrice)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: averagePriceString) { newValue in
+                                if let value = Double(newValue) {
+                                    tempStock.averagePrice = value
+                                }
+                            }
                         
-                        inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: Binding(
-                            get: { String(self.tempStock.sharesAmount) },
-                            set: { if let value = Double($0) { self.tempStock.sharesAmount = Int(value) } }
-                        ))
-                        .focused($focusedField, equals: .sharesAmount)
-                        .keyboardType(.decimalPad)
+                        inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: $sharesAmountString)
+                            .focused($focusedField, equals: .sharesAmount)
+                            .keyboardType(.decimalPad)
+                            .onChange(of: sharesAmountString) { newValue in
+                                if let value = Double(newValue) {
+                                    tempStock.sharesAmount = value
+                                }
+                            }
                         
                         Button(action: continueAction) {
                             Text("Save Changes")
@@ -52,6 +60,12 @@ struct StockEditView: View {
                                 .cornerRadius(12)
                         }
                         .padding(.top, 20)
+                        
+                        Button(action: clearFields) {
+                            Text("Clear")
+                                .foregroundColor(.blue)
+                        }
+                        .padding(.top, 10)
                     }
                     .padding()
                 }
@@ -74,7 +88,7 @@ struct StockEditView: View {
             
             TextField(placeholder, text: binding)
                 .padding()
-                .background(Color.customRectangleFill)
+                .background(Color(UIColor.systemBackground))
                 .cornerRadius(10)
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
@@ -87,18 +101,29 @@ struct StockEditView: View {
         if tempStock.averagePrice <= 0 || tempStock.sharesAmount <= 0 {
             showAlert = true
         } else {
-//            stock = tempStock
-//            dismiss()
-            
             if store.isPurchased || store.calculationsRemaining > 0 {
                 stock = tempStock
                 store.useCalculation()
+                saveStockToUserDefaults()
                 dismiss()
-                    
-                } else {
-                    // Show an alert or the purchase view
-                    showingPurchaseView = true
-                }
+            } else {
+                showingPurchaseView = true
+            }
         }
+    }
+
+    private func clearFields() {
+        tempStock.name = ""
+        averagePriceString = ""
+        sharesAmountString = ""
+        tempStock.averagePrice = 0
+        tempStock.sharesAmount = 0
+    }
+    
+    private func saveStockToUserDefaults() {
+        let defaults = UserDefaults.standard
+        defaults.set(stock.name, forKey: "stockName")
+        defaults.set(stock.averagePrice, forKey: "stockAveragePrice")
+        defaults.set(stock.sharesAmount, forKey: "stockSharesAmount")
     }
 }

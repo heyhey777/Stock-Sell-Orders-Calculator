@@ -8,27 +8,12 @@ struct Stock_Sell_Orders_CalculatorApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
+            ContentView(strategySettingsManager: strategySettingsManager)
                                 .background(Color.appBackground)
                                 .environmentObject(store)
         }
     }
 }
-//
-//        WindowGroup {
-//            if appState.isFirstLaunch {
-//                StockEditView(stock: $appState.stock)
-//                    .background(Color.appBackground)
-//                    .onDisappear {
-//                        appState.isFirstLaunch = false
-//                    }
-//            } else {
-//                ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
-//                    .background(Color.appBackground)
-//            }
-//        }
-
-
 
 class AppState: ObservableObject {
     @Published var isFirstLaunch: Bool

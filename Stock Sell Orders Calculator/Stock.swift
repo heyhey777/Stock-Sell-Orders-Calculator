@@ -11,9 +11,9 @@ struct Stock: Codable, Identifiable {
     let id: UUID
     var name: String
     var averagePrice: Double
-    var sharesAmount: Int
+    var sharesAmount: Double
     
-    init(id: UUID = UUID(), name: String, averagePrice: Double, sharesAmount: Int) {
+    init(id: UUID = UUID(), name: String, averagePrice: Double, sharesAmount: Double) {
         self.id = id
         self.name = name
         self.averagePrice = averagePrice

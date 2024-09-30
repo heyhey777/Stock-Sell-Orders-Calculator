@@ -2,12 +2,21 @@ import SwiftUI
 import StoreKit
 
 struct ContentView: View {
-    @Binding var stock: Stock
+    @State private var stock: Stock
     @ObservedObject var strategySettingsManager: StrategySettingsManager
     @EnvironmentObject var store: Store
     @State private var showingEditView = false
     @State private var showingStrategySettingsView = false
     @State private var showingPurchaseView = false
+    
+    init(strategySettingsManager: StrategySettingsManager) {
+        self.strategySettingsManager = strategySettingsManager
+        let defaults = UserDefaults.standard
+        let name = defaults.string(forKey: "stockName") ?? ""
+        let averagePrice = defaults.double(forKey: "stockAveragePrice")
+        let sharesAmount = defaults.double(forKey: "stockSharesAmount")
+        self._stock = State(initialValue: Stock(name: name, averagePrice: averagePrice, sharesAmount: sharesAmount))
+    }
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -78,8 +87,8 @@ struct ContentView: View {
                 .padding(.horizontal)
             
             HStack(spacing: 20) {
-                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .green)
-                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .blue)
+                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .purple)
+                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .purple)
             }
         }
         .padding()
