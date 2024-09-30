@@ -4,8 +4,10 @@ import StoreKit
 struct ContentView: View {
     @Binding var stock: Stock
     @ObservedObject var strategySettingsManager: StrategySettingsManager
+    @EnvironmentObject var store: Store
     @State private var showingEditView = false
     @State private var showingStrategySettingsView = false
+    @State private var showingPurchaseView = false
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -21,7 +23,7 @@ struct ContentView: View {
                         header
                         priceTargetsArea
                         Spacer(minLength: 20)
-                        restorePurchaseButton
+                        purchaseArea
                     }
                     .padding(.bottom, 20)
                     .padding(.top, 20)
@@ -33,6 +35,23 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingStrategySettingsView) {
             StrategySettingsView(settingsManager: strategySettingsManager)
+        }
+        .sheet(isPresented: $showingPurchaseView) {
+            PurchaseView()
+        }
+    }
+    
+    private var purchaseArea: some View {
+        VStack {
+            if !store.isPurchased {
+                Text("Calculations remaining: \(store.calculationsRemaining)")
+                    .font(.headline)
+                
+                Button("Purchase Full Access") {
+                    showingPurchaseView = true
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
     }
     
@@ -188,28 +207,5 @@ struct ContentView: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(Color.customRectangleFill)
         )
-    }
-    
-    private var restorePurchaseButton: some View {
-        Button(action: {
-            // Commented out implementation for restore purchase
-            /*
-            Task {
-                do {
-                    try await AppStore.sync()
-                } catch {
-                    print("Failed to restore purchases: \(error)")
-                }
-            }
-            */
-        }) {
-            Text("Restore Purchase")
-                .foregroundColor(.blue)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.customBackground)
-                .cornerRadius(10)
-        }
-        .padding(.horizontal)
     }
 }

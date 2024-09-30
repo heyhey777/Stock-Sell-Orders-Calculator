@@ -19,6 +19,8 @@
 		44C072C22CA8B00F00DF16F2 /* StrategySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */; };
 		44C072C42CA8B03900DF16F2 /* StrategySettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C32CA8B03900DF16F2 /* StrategySettings.swift */; };
 		44C072C62CA9B4C000DF16F2 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */; };
+		44C072C82CAADBEC00DF16F2 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C72CAADBEC00DF16F2 /* Store.swift */; };
+		44C072CA2CAADDE900DF16F2 /* PurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C92CAADDE900DF16F2 /* PurchaseView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,6 +57,8 @@
 		44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategySettingsView.swift; sourceTree = "<group>"; };
 		44C072C32CA8B03900DF16F2 /* StrategySettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StrategySettings.swift; sourceTree = "<group>"; };
 		44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorScheme.swift; sourceTree = "<group>"; };
+		44C072C72CAADBEC00DF16F2 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
+		44C072C92CAADDE900DF16F2 /* PurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +111,8 @@
 			children = (
 				44C072902CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift */,
 				44C072922CA81BC300DF16F2 /* ContentView.swift */,
+				44C072C72CAADBEC00DF16F2 /* Store.swift */,
+				44C072C92CAADDE900DF16F2 /* PurchaseView.swift */,
 				44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */,
 				44C072C12CA8B00F00DF16F2 /* StrategySettingsView.swift */,
 				44C072C32CA8B03900DF16F2 /* StrategySettings.swift */,
@@ -277,6 +283,8 @@
 				44C072932CA81BC300DF16F2 /* ContentView.swift in Sources */,
 				44C072912CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift in Sources */,
 				44C072C22CA8B00F00DF16F2 /* StrategySettingsView.swift in Sources */,
+				44C072CA2CAADDE900DF16F2 /* PurchaseView.swift in Sources */,
+				44C072C82CAADBEC00DF16F2 /* Store.swift in Sources */,
 				44C072C62CA9B4C000DF16F2 /* ColorScheme.swift in Sources */,
 				44C072C42CA8B03900DF16F2 /* StrategySettings.swift in Sources */,
 				44C072C02CA8A6EA00DF16F2 /* Stock.swift in Sources */,

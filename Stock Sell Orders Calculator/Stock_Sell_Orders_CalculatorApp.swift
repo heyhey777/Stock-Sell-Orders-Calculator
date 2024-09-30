@@ -4,13 +4,13 @@ import SwiftUI
 struct Stock_Sell_Orders_CalculatorApp: App {
     @StateObject private var appState = AppState()
     @StateObject private var strategySettingsManager = StrategySettingsManager()
+    @StateObject private var store = Store()
     
     var body: some Scene {
         WindowGroup {
-            
-            
             ContentView(stock: $appState.stock, strategySettingsManager: strategySettingsManager)
-                .background(Color.appBackground)
+                                .background(Color.appBackground)
+                                .environmentObject(store)
         }
     }
 }

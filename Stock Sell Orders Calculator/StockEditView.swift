@@ -3,9 +3,11 @@ import SwiftUI
 struct StockEditView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var stock: Stock
+    @EnvironmentObject var store: Store
     @State private var tempStock: Stock
     @State private var showAlert = false
     @FocusState private var focusedField: Field?
+    @State private var showingPurchaseView = false
 
     enum Field: Hashable {
         case stockName, averagePrice, sharesAmount
@@ -85,8 +87,18 @@ struct StockEditView: View {
         if tempStock.averagePrice <= 0 || tempStock.sharesAmount <= 0 {
             showAlert = true
         } else {
-            stock = tempStock
-            dismiss()
+//            stock = tempStock
+//            dismiss()
+            
+            if store.isPurchased || store.calculationsRemaining > 0 {
+                stock = tempStock
+                store.useCalculation()
+                dismiss()
+                    
+                } else {
+                    // Show an alert or the purchase view
+                    showingPurchaseView = true
+                }
         }
     }
 }
