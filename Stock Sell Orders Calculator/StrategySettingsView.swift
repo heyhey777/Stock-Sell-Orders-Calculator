@@ -14,7 +14,7 @@ struct StrategySettingsView: View {
                 Color.appBackground.edgesIgnoringSafeArea(.all)
                 
                 ScrollView {
-                    VStack(spacing: 24) {
+                    VStack(spacing: 12) {
                         totalAllocationCard
                         
                         targetSection(title: "Profit Taking Targets", targets: $settingsManager.currentSettings.profitTakingTargets, isStopLoss: false)
@@ -206,7 +206,7 @@ struct TargetRow: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 1) {
                 Text(isStopLoss ? "Loss %" : "Gain %")
                     .font(.caption)
                     .foregroundColor(.secondary)
@@ -234,7 +234,6 @@ struct TargetRow: View {
                     .imageScale(.large)
             }
         }
-        .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.customRectangleFill)

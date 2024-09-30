@@ -46,8 +46,10 @@ struct ContentView: View {
             .background(
                 Rectangle()
                     .fill(Color.appBackground)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5) // Shadow with offset
+                    .clipped() // Ensures the shadow doesn't extend beyond the bottom
             )
+
     }
     
     private var header: some View {
@@ -125,7 +127,7 @@ struct ContentView: View {
                 .imageScale(.large)
             
             Text("Strategy settings")
-                .font(.headline)
+                .font(.body)
                 .foregroundColor(.primary)
             
             Spacer()
@@ -133,7 +135,6 @@ struct ContentView: View {
             Image(systemName: "chevron.right")
                 .foregroundColor(.secondary)
         }
-        .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.customRectangleFill)
@@ -146,8 +147,8 @@ struct ContentView: View {
     private func sectionHeader(title: String) -> some View {
         HStack {
             Text(title)
-                .font(.title3)
-                .fontWeight(.semibold)
+                .font(.title2)
+                .fontWeight(.regular)
                 .foregroundColor(.primary)
             Spacer()
         }
@@ -175,7 +176,7 @@ struct ContentView: View {
         
         return VStack(alignment: .leading, spacing: 4) {
             Text("Sell \(sharesToSell) shares at $\(String(format: "%.2f", targetPrice))")
-                .font(.subheadline)
+                .font(.title3)
                 .fontWeight(.medium)
             Text("\(String(format: "%.1f", target.percentage))% \(isProfit ? "gain" : "loss"), \(String(format: "%.1f", target.allocation))% of position")
                 .font(.caption)

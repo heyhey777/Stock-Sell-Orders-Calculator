@@ -9,7 +9,7 @@ import SwiftUI
 
 extension Color {
     static let customBackground = Color("AppBackground")
-    static let customRectangleFill = Color("CustomRectangleFill")
+    static let customRectangleFill = Color("AppRectangleFill")
 }
 
 struct CustomColors {
