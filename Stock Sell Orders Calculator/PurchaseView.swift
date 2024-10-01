@@ -34,7 +34,6 @@ struct PurchaseView: View {
                 VStack(spacing: 16) {
                     FeatureRow(icon: "infinity", text: "Unlimited calculations")
                     FeatureRow(icon: "square.stack.3d.up", text: "Unlimited strategy saves")
-                 //   FeatureRow(icon: "lock.open", text: "Remove all restrictions")
                 }
                 .padding()
                 .background(
@@ -61,7 +60,7 @@ struct PurchaseView: View {
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
                         .padding()
-                        .background(Color.blue)
+                        .background(Color.accentColor)
                         .cornerRadius(12)
                 }
                 .disabled(isPurchasing)
@@ -72,7 +71,7 @@ struct PurchaseView: View {
                         dismiss()
                     }
                 }
-                .foregroundColor(.blue)
+                .foregroundColor(.brown)
                 .padding()
             }
             .padding()
@@ -87,7 +86,7 @@ struct FeatureRow: View {
     var body: some View {
         HStack(spacing: 16) {
             Image(systemName: icon)
-                .foregroundColor(.blue)
+                .foregroundColor(.accentColor)
                 .font(.system(size: 24))
             Text(text)
                 .font(.body)

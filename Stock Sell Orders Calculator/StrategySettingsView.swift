@@ -43,7 +43,7 @@ struct StrategySettingsView: View {
                             showingAllocationWarning = true
                         }
                     }
-                    .foregroundColor(.blue)
+                    .foregroundColor(.accentColor)
                 }
             }
             .alert("Save Strategy", isPresented: $showingSaveAlert) {
@@ -88,7 +88,7 @@ struct StrategySettingsView: View {
             Text("Total Allocation")
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text("\(totalAllocation, specifier: "%.2f")%")
+            Text(String(format: "%.2f", totalAllocation).replacingOccurrences(of: ".00", with: "") + "%")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .foregroundColor(totalAllocation > 100 ? .red : .primary)
         }
@@ -127,7 +127,7 @@ struct StrategySettingsView: View {
                      }
                  }) {
                      Label("Add Target", systemImage: "plus.circle.fill")
-                         .foregroundColor(.blue)
+                         .foregroundColor(.accentColor)
                          .padding(.vertical, 8)
                  }
              }
@@ -172,7 +172,7 @@ struct StrategySettingsView: View {
                         }
                     }) {
                         Image(systemName: "trash")
-                            .foregroundColor(.gray) 
+                            .foregroundColor(.gray)
                     }
                 }
             }
@@ -196,7 +196,7 @@ struct StrategySettingsView: View {
                 .padding()
                 .background(
                     RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.blue)
+                        .fill(Color.accentColor)
                 )
         }
     }
@@ -204,15 +204,6 @@ struct StrategySettingsView: View {
     private func updateTotalAllocation() {
         totalAllocation = settingsManager.currentSettings.stopLossTargets.reduce(0) { $0 + ($1.allocation ?? 0) } +
         settingsManager.currentSettings.profitTakingTargets.reduce(0) { $0 + ($1.allocation ?? 0) }
-    }
-
-    
-    private func deleteSettings(at offsets: IndexSet) {
-        withAnimation {
-            offsets.forEach { index in
-                settingsManager.deleteSavedSettings(at: index)
-            }
-        }
     }
 }
 
@@ -238,7 +229,10 @@ struct TargetRow: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .focused($focusedField, equals: target.id)
                     .onChange(of: percentageString) { newValue in
-                        target.percentage = Double(newValue)
+                        if let value = Double(newValue) {
+                            target.percentage = value
+                            percentageString = String(format: "%.2f", value).replacingOccurrences(of: ".00", with: "")
+                        }
                         onUpdate()
                     }
             }
@@ -252,7 +246,10 @@ struct TargetRow: View {
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .onChange(of: allocationString) { newValue in
-                        target.allocation = Double(newValue)
+                        if let value = Double(newValue) {
+                            target.allocation = value
+                            allocationString = String(format: "%.2f", value).replacingOccurrences(of: ".00", with: "")
+                        }
                         onUpdate()
                     }
             }
@@ -260,7 +257,7 @@ struct TargetRow: View {
             
             Button(action: onDelete) {
                 Image(systemName: "trash")
-                    .foregroundColor(colorScheme == .dark ? .gray : .gray) // :D
+                    .foregroundColor(colorScheme == .dark ? .gray : .gray)
                     .imageScale(.large)
             }
         }
@@ -269,8 +266,8 @@ struct TargetRow: View {
                 .fill(Color.customBackground)
         )
         .onAppear {
-            percentageString = target.percentage.map { String($0) } ?? ""
-            allocationString = target.allocation.map { String($0) } ?? ""
+            percentageString = target.percentage.map { String(format: "%.2f", $0).replacingOccurrences(of: ".00", with: "") } ?? ""
+            allocationString = target.allocation.map { String(format: "%.2f", $0).replacingOccurrences(of: ".00", with: "") } ?? ""
         }
     }
 }

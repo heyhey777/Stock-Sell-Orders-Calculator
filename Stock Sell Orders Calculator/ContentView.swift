@@ -60,6 +60,7 @@ struct ContentView: View {
                     showingPurchaseView = true
                 }
                 .buttonStyle(.borderedProminent)
+                .tint(.accentColor)
             }
         }
     }
@@ -74,10 +75,9 @@ struct ContentView: View {
             .background(
                 Rectangle()
                     .fill(Color.appBackground)
-                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5) // Shadow with offset
-                    .clipped() // Ensures the shadow doesn't extend beyond the bottom
+                    .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5)
+                    .clipped()
             )
-        
     }
     
     private var header: some View {
@@ -87,8 +87,8 @@ struct ContentView: View {
                 .padding(.horizontal)
             
             HStack(spacing: 20) {
-                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .black)
-                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .black)
+                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .accentColor)
+                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .accentColor)
             }
         }
         .padding()
@@ -113,7 +113,7 @@ struct ContentView: View {
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
-            Text(value)
+            Text(value.hasSuffix(".00") ? String(value.dropLast(3)) : value)
                 .font(.title3)
                 .fontWeight(.semibold)
         }
@@ -150,8 +150,8 @@ struct ContentView: View {
     
     private var priceTargetsPanel: some View {
         HStack {
-            Image(systemName: "pencil.circle.fill")
-                .foregroundColor(.primary)
+            Image(systemName: "pencil")
+                .foregroundColor(.accentColor)
                 .imageScale(.large)
             
             Text("Strategy settings")
@@ -159,9 +159,6 @@ struct ContentView: View {
                 .foregroundColor(.primary)
             
             Spacer()
-            
-//            Image(systemName: "chevron.right")
-//                .foregroundColor(.secondary)
         }
         .background(
             RoundedRectangle(cornerRadius: 12)
@@ -204,18 +201,20 @@ struct ContentView: View {
         if let percentage = target.percentage {
             targetPrice = isProfit ? stock.averagePrice * (1 + percentage / 100) : stock.averagePrice * (1 - percentage / 100)
         } else {
-            targetPrice = stock.averagePrice // Default to current price if percentage is nil
+            targetPrice = stock.averagePrice
         }
         
-        let sharesToSell: Int
+        let sharesToSell: Double
         if let allocation = target.allocation {
-            sharesToSell = Int(Double(stock.sharesAmount) * allocation / 100)
+            sharesToSell = Double(stock.sharesAmount) * allocation / 100
         } else {
-            sharesToSell = 0 // Default to 0 if allocation is nil
+            sharesToSell = 0
         }
         
+        let sharesToSellFormatted = sharesToSell.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", sharesToSell) : String(format: "%.1f", sharesToSell)
+
         return VStack(alignment: .leading, spacing: 4) {
-            Text("Sell \(sharesToSell) shares at $\(String(format: "%.2f", targetPrice))")
+            Text("Sell \(sharesToSellFormatted) shares at $\(String(format: "%.2f", targetPrice))")
                 .font(.title3)
                 .fontWeight(.medium)
             Text("\(target.percentage.map { String(format: "%.1f", $0) } ?? "N/A")% \(isProfit ? "gain" : "loss"), \(target.allocation.map { String(format: "%.1f", $0) } ?? "N/A")% of position")

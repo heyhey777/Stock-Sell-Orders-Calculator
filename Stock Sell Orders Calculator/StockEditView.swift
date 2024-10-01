@@ -43,7 +43,7 @@ struct StockEditView: View {
                         
                         inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: $sharesAmountString)
                             .focused($focusedField, equals: .sharesAmount)
-                            .keyboardType(.decimalPad)
+                            .keyboardType(.numberPad)
                             .onChange(of: sharesAmountString) { newValue in
                                 if let value = Double(newValue) {
                                     tempStock.sharesAmount = value
@@ -56,14 +56,14 @@ struct StockEditView: View {
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.blue)
+                                .background(Color.accentColor)
                                 .cornerRadius(12)
                         }
                         .padding(.top, 20)
                         
                         Button(action: clearFields) {
                             Text("Clear")
-                                .foregroundColor(.blue)
+                                .foregroundColor(.accentColor)
                         }
                         .padding(.top, 10)
                     }
@@ -73,7 +73,8 @@ struct StockEditView: View {
             .navigationBarTitle("Edit Stock", displayMode: .inline)
             .navigationBarItems(trailing: Button("Cancel") {
                 dismiss()
-            })
+            }
+                .foregroundColor(.accentColor)) 
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
             }
