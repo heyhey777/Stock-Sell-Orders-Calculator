@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct StrategySettingsView: View {
     @ObservedObject var settingsManager: StrategySettingsManager
@@ -9,6 +10,7 @@ struct StrategySettingsView: View {
     @State private var showingSaveAlert = false
     @State private var showPurchaseView = false
     @Environment(\.dismiss) private var dismiss
+    @FocusState private var focusedField: UUID?
     
     var body: some View {
         NavigationView {
@@ -26,45 +28,45 @@ struct StrategySettingsView: View {
                         presetsSection
                         
                         saveStrategyButton
-                        }
-                        .padding()
                     }
+                    .padding()
                 }
-                .navigationTitle("Strategy Settings")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("Done") {
-                            if totalAllocation <= 100 {
-                                dismiss()
-                            } else {
-                                showingAllocationWarning = true
+            }
+            .navigationTitle("Strategy Settings")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Done") {
+                        if totalAllocation <= 100 {
+                            dismiss()
+                        } else {
+                            showingAllocationWarning = true
+                        }
+                    }
+                    .foregroundColor(.blue)
+                }
+            }
+            .alert("Save Strategy", isPresented: $showingSaveAlert) {
+                TextField("Strategy Name", text: $newSetupName)
+                Button("Save") {
+                    if !newSetupName.isEmpty {
+                        Task {
+                            await settingsManager.saveCurrentSettings(name: newSetupName, store: store)
+                            newSetupName = ""
+                            if settingsManager.showPurchaseView {
+                                settingsManager.showPurchaseView = false
+                                showPurchaseView = true
                             }
                         }
-                        .foregroundColor(.blue)
                     }
                 }
-                .alert("Save Strategy", isPresented: $showingSaveAlert) {
-                    TextField("Strategy Name", text: $newSetupName)
-                    Button("Save") {
-                        if !newSetupName.isEmpty {
-                            Task {
-                                await settingsManager.saveCurrentSettings(name: newSetupName, store: store)
-                                newSetupName = ""
-                                if settingsManager.showPurchaseView {
-                                    settingsManager.showPurchaseView = false
-                                    showPurchaseView = true
-                                }
-                            }
-                        }
-                    }
-                    Button("Cancel", role: .cancel) {}
-                } message: {
-                    Text("Enter a name for your current strategy")
-                }
-                .sheet(isPresented: $showPurchaseView) {
-                    PurchaseView()
-                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                Text("Enter a name for your current strategy")
+            }
+            .sheet(isPresented: $showPurchaseView) {
+                PurchaseView()
+            }
             .alert(isPresented: $showingAllocationWarning) {
                 Alert(
                     title: Text("Invalid Allocation"),
@@ -74,6 +76,9 @@ struct StrategySettingsView: View {
             }
             .onAppear {
                 updateTotalAllocation()
+            }
+            .onTapGesture {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
             }
         }
     }
@@ -97,42 +102,44 @@ struct StrategySettingsView: View {
     }
     
     private func targetSection(title: String, targets: Binding<[StrategySettings.Target]>, isStopLoss: Bool) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text(title)
-                .font(.title3)
-                .fontWeight(.bold)
-            
-            ForEach(targets) { $target in
-                TargetRow(target: $target, isStopLoss: isStopLoss, onDelete: {
-                    withAnimation {
-                        targets.wrappedValue.removeAll { $0.id == target.id }
-                        updateTotalAllocation()
-                    }
-                }, onUpdate: {
-                    updateTotalAllocation()
-                })
-            }
-            
-            if targets.wrappedValue.count < 3 {
-                Button(action: {
-                    withAnimation {
-                        targets.wrappedValue.append(StrategySettings.Target(percentage: 0, allocation: 0))
-                    }
-                }) {
-                    Label("Add Target", systemImage: "plus.circle.fill")
-                        .foregroundColor(.blue)
-                        .padding(.vertical, 8)
-                }
-            }
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.customBackground)
-                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-        )
-    }
-    
+         VStack(alignment: .leading, spacing: 16) {
+             Text(title)
+                 .font(.title3)
+                 .fontWeight(.bold)
+             
+             ForEach(targets) { $target in
+                 TargetRow(target: $target, isStopLoss: isStopLoss, focusedField: _focusedField, onDelete: {
+                     withAnimation {
+                         targets.wrappedValue.removeAll { $0.id == target.id }
+                         updateTotalAllocation()
+                     }
+                 }, onUpdate: {
+                     updateTotalAllocation()
+                 })
+             }
+             
+             if targets.wrappedValue.count < 3 {
+                 Button(action: {
+                     withAnimation {
+                         let newTarget = StrategySettings.Target(percentage: nil, allocation: nil)
+                         targets.wrappedValue.append(newTarget)
+                         focusedField = newTarget.id
+                     }
+                 }) {
+                     Label("Add Target", systemImage: "plus.circle.fill")
+                         .foregroundColor(.blue)
+                         .padding(.vertical, 8)
+                 }
+             }
+         }
+         .padding()
+         .background(
+             RoundedRectangle(cornerRadius: 16)
+                 .fill(Color.customBackground)
+                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+         )
+     }
+     
     private var presetsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Saved Strategies")
@@ -165,7 +172,7 @@ struct StrategySettingsView: View {
                         }
                     }) {
                         Image(systemName: "trash")
-                            .foregroundColor(.red)
+                            .foregroundColor(.gray) 
                     }
                 }
             }
@@ -195,8 +202,8 @@ struct StrategySettingsView: View {
     }
     
     private func updateTotalAllocation() {
-        totalAllocation = settingsManager.currentSettings.stopLossTargets.reduce(0) { $0 + $1.allocation } +
-        settingsManager.currentSettings.profitTakingTargets.reduce(0) { $0 + $1.allocation }
+        totalAllocation = settingsManager.currentSettings.stopLossTargets.reduce(0) { $0 + ($1.allocation ?? 0) } +
+        settingsManager.currentSettings.profitTakingTargets.reduce(0) { $0 + ($1.allocation ?? 0) }
     }
 
     
@@ -212,8 +219,13 @@ struct StrategySettingsView: View {
 struct TargetRow: View {
     @Binding var target: StrategySettings.Target
     let isStopLoss: Bool
+    @FocusState var focusedField: UUID?
     let onDelete: () -> Void
     let onUpdate: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+    
+    @State private var percentageString: String = ""
+    @State private var allocationString: String = ""
     
     var body: some View {
         HStack(spacing: 16) {
@@ -221,10 +233,14 @@ struct TargetRow: View {
                 Text(isStopLoss ? "Loss %" : "Gain %")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                TextField("", value: $target.percentage, format: .number)
+                TextField("", text: $percentageString)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: target.percentage) { _ in onUpdate() }
+                    .focused($focusedField, equals: target.id)
+                    .onChange(of: percentageString) { newValue in
+                        target.percentage = Double(newValue)
+                        onUpdate()
+                    }
             }
             .frame(maxWidth: .infinity)
             
@@ -232,16 +248,19 @@ struct TargetRow: View {
                 Text("Allocation")
                     .font(.caption)
                     .foregroundColor(.secondary)
-                TextField("", value: $target.allocation, format: .number)
+                TextField("", text: $allocationString)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .onChange(of: target.allocation) { _ in onUpdate() }
+                    .onChange(of: allocationString) { newValue in
+                        target.allocation = Double(newValue)
+                        onUpdate()
+                    }
             }
             .frame(maxWidth: .infinity)
             
             Button(action: onDelete) {
                 Image(systemName: "trash")
-                    .foregroundColor(.red)
+                    .foregroundColor(colorScheme == .dark ? .gray : .gray) // :D
                     .imageScale(.large)
             }
         }
@@ -249,6 +268,10 @@ struct TargetRow: View {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.customBackground)
         )
+        .onAppear {
+            percentageString = target.percentage.map { String($0) } ?? ""
+            allocationString = target.allocation.map { String($0) } ?? ""
+        }
     }
 }
 

@@ -77,7 +77,7 @@ struct ContentView: View {
                     .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 5) // Shadow with offset
                     .clipped() // Ensures the shadow doesn't extend beyond the bottom
             )
-
+        
     }
     
     private var header: some View {
@@ -87,8 +87,8 @@ struct ContentView: View {
                 .padding(.horizontal)
             
             HStack(spacing: 20) {
-                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .purple)
-                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .purple)
+                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .black)
+                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .black)
             }
         }
         .padding()
@@ -160,12 +160,13 @@ struct ContentView: View {
             
             Spacer()
             
-            Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
+//            Image(systemName: "chevron.right")
+//                .foregroundColor(.secondary)
         }
         .background(
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.customRectangleFill)
+                .frame(maxWidth: .infinity)
         )
         .onTapGesture {
             showingStrategySettingsView = true
@@ -181,7 +182,7 @@ struct ContentView: View {
             Spacer()
         }
     }
-
+    
     private var profitTakingTargets: some View {
         VStack(spacing: 8) {
             ForEach(strategySettingsManager.currentSettings.profitTakingTargets) { target in
@@ -189,7 +190,7 @@ struct ContentView: View {
             }
         }
     }
-
+    
     private var stopLossTargets: some View {
         VStack(spacing: 8) {
             ForEach(strategySettingsManager.currentSettings.stopLossTargets) { target in
@@ -199,14 +200,25 @@ struct ContentView: View {
     }
     
     private func targetRow(for target: StrategySettings.Target, isProfit: Bool) -> some View {
-        let targetPrice = isProfit ? stock.averagePrice * (1 + target.percentage / 100) : stock.averagePrice * (1 - target.percentage / 100)
-        let sharesToSell = Int(Double(stock.sharesAmount) * target.allocation / 100)
+        let targetPrice: Double
+        if let percentage = target.percentage {
+            targetPrice = isProfit ? stock.averagePrice * (1 + percentage / 100) : stock.averagePrice * (1 - percentage / 100)
+        } else {
+            targetPrice = stock.averagePrice // Default to current price if percentage is nil
+        }
+        
+        let sharesToSell: Int
+        if let allocation = target.allocation {
+            sharesToSell = Int(Double(stock.sharesAmount) * allocation / 100)
+        } else {
+            sharesToSell = 0 // Default to 0 if allocation is nil
+        }
         
         return VStack(alignment: .leading, spacing: 4) {
             Text("Sell \(sharesToSell) shares at $\(String(format: "%.2f", targetPrice))")
                 .font(.title3)
                 .fontWeight(.medium)
-            Text("\(String(format: "%.1f", target.percentage))% \(isProfit ? "gain" : "loss"), \(String(format: "%.1f", target.allocation))% of position")
+            Text("\(target.percentage.map { String(format: "%.1f", $0) } ?? "N/A")% \(isProfit ? "gain" : "loss"), \(target.allocation.map { String(format: "%.1f", $0) } ?? "N/A")% of position")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

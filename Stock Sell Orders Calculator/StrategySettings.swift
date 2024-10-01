@@ -16,10 +16,10 @@ struct StrategySettings: Codable, Identifiable {
     
     struct Target: Identifiable, Codable {
         let id: UUID
-        var percentage: Double
-        var allocation: Double
+        var percentage: Double?
+        var allocation: Double?
         
-        init(id: UUID = UUID(), percentage: Double, allocation: Double) {
+        init(id: UUID = UUID(), percentage: Double? = nil, allocation: Double? = nil) {
             self.id = id
             self.percentage = percentage
             self.allocation = allocation
