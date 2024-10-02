@@ -50,13 +50,17 @@ struct StrategySettingsView: View {
                 TextField("Strategy Name", text: $newSetupName)
                 Button("Save") {
                     if !newSetupName.isEmpty {
-                        Task {
-                            await settingsManager.saveCurrentSettings(name: newSetupName, store: store)
-                            newSetupName = ""
-                            if settingsManager.showPurchaseView {
-                                settingsManager.showPurchaseView = false
-                                showPurchaseView = true
+                        if totalAllocation <= 100 {
+                            Task {
+                                await settingsManager.saveCurrentSettings(name: newSetupName, store: store)
+                                newSetupName = ""
+                                if settingsManager.showPurchaseView {
+                                    settingsManager.showPurchaseView = false
+                                    showPurchaseView = true
+                                }
                             }
+                        } else {
+                            showingAllocationWarning = true
                         }
                     }
                 }
@@ -229,9 +233,12 @@ struct TargetRow: View {
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .focused($focusedField, equals: target.id)
                     .onChange(of: percentageString) { newValue in
-                        if let value = Double(newValue) {
+                        let filtered = newValue.filter { "0123456789.".contains($0) }
+                        if filtered != newValue {
+                            percentageString = filtered
+                        }
+                        if let value = Double(filtered) {
                             target.percentage = value
-                            percentageString = String(format: "%.2f", value).replacingOccurrences(of: ".00", with: "")
                         }
                         onUpdate()
                     }
@@ -239,16 +246,19 @@ struct TargetRow: View {
             .frame(maxWidth: .infinity)
             
             VStack(alignment: .leading, spacing: 4) {
-                Text("Allocation")
+                Text("Allocation %")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 TextField("", text: $allocationString)
                     .keyboardType(.decimalPad)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .onChange(of: allocationString) { newValue in
-                        if let value = Double(newValue) {
+                        let filtered = newValue.filter { "0123456789.".contains($0) }
+                        if filtered != newValue {
+                            allocationString = filtered
+                        }
+                        if let value = Double(filtered) {
                             target.allocation = value
-                            allocationString = String(format: "%.2f", value).replacingOccurrences(of: ".00", with: "")
                         }
                         onUpdate()
                     }
@@ -266,8 +276,8 @@ struct TargetRow: View {
                 .fill(Color.customBackground)
         )
         .onAppear {
-            percentageString = target.percentage.map { String(format: "%.2f", $0).replacingOccurrences(of: ".00", with: "") } ?? ""
-            allocationString = target.allocation.map { String(format: "%.2f", $0).replacingOccurrences(of: ".00", with: "") } ?? ""
+            percentageString = target.percentage.map { String($0) } ?? ""
+            allocationString = target.allocation.map { String($0) } ?? ""
         }
     }
 }

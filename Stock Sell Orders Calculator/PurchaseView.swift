@@ -71,7 +71,7 @@ struct PurchaseView: View {
                         dismiss()
                     }
                 }
-                .foregroundColor(.brown)
+                .foregroundColor(.accentColor)
                 .padding()
             }
             .padding()
