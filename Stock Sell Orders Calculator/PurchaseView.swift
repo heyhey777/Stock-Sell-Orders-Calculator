@@ -42,16 +42,21 @@ struct PurchaseView: View {
                         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                 )
                 
+                if store.isProductLoading {
+                    ProgressView()
+                } else if let errorMessage = store.errorMessage {
+                    Text(errorMessage)
+                        .foregroundColor(.red)
+                        .multilineTextAlignment(.center)
+                }
+                
                 Button(action: {
                     Task {
                         isPurchasing = true
-                        do {
-                            try await store.purchase()
-                            isPurchasing = false
+                        await store.purchase()
+                        isPurchasing = false
+                        if store.isPurchased {
                             dismiss()
-                        } catch {
-                            print("Purchase failed: \(error)")
-                            isPurchasing = false
                         }
                     }
                 }) {
@@ -63,18 +68,27 @@ struct PurchaseView: View {
                         .background(Color.accentColor)
                         .cornerRadius(12)
                 }
-                .disabled(isPurchasing)
+                .disabled(isPurchasing || store.products.isEmpty || store.isProductLoading)
                 
                 Button("Restore Purchase") {
                     Task {
                         await store.updatePurchaseStatus()
-                        dismiss()
+                        if store.isPurchased {
+                            dismiss()
+                        }
                     }
                 }
                 .foregroundColor(.accentColor)
                 .padding()
             }
             .padding()
+        }
+        .onAppear {
+            if store.products.isEmpty && !store.isProductLoading {
+                Task {
+                    await store.requestProducts()
+                }
+            }
         }
     }
 }

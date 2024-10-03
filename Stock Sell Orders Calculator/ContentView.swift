@@ -33,6 +33,7 @@ struct ContentView: View {
                         priceTargetsArea
                         Spacer(minLength: 20)
                         purchaseArea
+                        Disclaimer
                     }
                     .padding(.bottom, 20)
                     .padding(.top, 20)
@@ -193,6 +194,15 @@ struct ContentView: View {
             ForEach(strategySettingsManager.currentSettings.stopLossTargets) { target in
                 targetRow(for: target, isProfit: false)
             }
+        }
+    }
+    
+    private var Disclaimer: some View {
+        VStack{
+            Text("Disclaimer: The calculations provided by this app are for informational purposes only and do not constitute financial advice. Users should consult with a qualified financial advisor before making any investment decisions. The app developers are not responsible for any losses or decisions made based on the information provided.")
+                .font(.caption2)
+                .foregroundStyle(.gray)
+                .padding()
         }
     }
     

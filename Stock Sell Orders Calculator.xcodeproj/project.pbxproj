@@ -21,6 +21,8 @@
 		44C072C62CA9B4C000DF16F2 /* ColorScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */; };
 		44C072C82CAADBEC00DF16F2 /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C72CAADBEC00DF16F2 /* Store.swift */; };
 		44C072CA2CAADDE900DF16F2 /* PurchaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44C072C92CAADDE900DF16F2 /* PurchaseView.swift */; };
+		44C072CD2CAF31E300DF16F2 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 44C072CC2CAF31E300DF16F2 /* StoreKit.framework */; };
+		44C072CF2CAF41DF00DF16F2 /* Configuration.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 44C072CE2CAF41DF00DF16F2 /* Configuration.storekit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +61,8 @@
 		44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorScheme.swift; sourceTree = "<group>"; };
 		44C072C72CAADBEC00DF16F2 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
 		44C072C92CAADDE900DF16F2 /* PurchaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseView.swift; sourceTree = "<group>"; };
+		44C072CC2CAF31E300DF16F2 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		44C072CE2CAF41DF00DF16F2 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				44C072CD2CAF31E300DF16F2 /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,6 +98,7 @@
 				44C072A12CA81BC700DF16F2 /* Stock Sell Orders CalculatorTests */,
 				44C072AB2CA81BC700DF16F2 /* Stock Sell Orders CalculatorUITests */,
 				44C0728E2CA81BC300DF16F2 /* Products */,
+				44C072CB2CAF31E300DF16F2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -111,6 +117,7 @@
 			children = (
 				44C072902CA81BC300DF16F2 /* Stock_Sell_Orders_CalculatorApp.swift */,
 				44C072922CA81BC300DF16F2 /* ContentView.swift */,
+				44C072CE2CAF41DF00DF16F2 /* Configuration.storekit */,
 				44C072C72CAADBEC00DF16F2 /* Store.swift */,
 				44C072C92CAADDE900DF16F2 /* PurchaseView.swift */,
 				44C072C52CA9B4C000DF16F2 /* ColorScheme.swift */,
@@ -148,6 +155,14 @@
 				44C072AE2CA81BC700DF16F2 /* Stock_Sell_Orders_CalculatorUITestsLaunchTests.swift */,
 			);
 			path = "Stock Sell Orders CalculatorUITests";
+			sourceTree = "<group>";
+		};
+		44C072CB2CAF31E300DF16F2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				44C072CC2CAF31E300DF16F2 /* StoreKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -255,6 +270,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				44C072992CA81BC700DF16F2 /* Preview Assets.xcassets in Resources */,
+				44C072CF2CAF41DF00DF16F2 /* Configuration.storekit in Resources */,
 				44C072952CA81BC700DF16F2 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

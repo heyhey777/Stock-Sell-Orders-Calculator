@@ -43,7 +43,7 @@ struct StockEditView: View {
                         
                         inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: $sharesAmountString)
                             .focused($focusedField, equals: .sharesAmount)
-                            .keyboardType(.numberPad)
+                            .keyboardType(.decimalPad)
                             .onChange(of: sharesAmountString) { newValue in
                                 if let value = Double(newValue) {
                                     tempStock.sharesAmount = value
