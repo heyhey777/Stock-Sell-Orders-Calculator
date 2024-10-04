@@ -88,7 +88,7 @@ struct ContentView: View {
                 .padding(.horizontal)
             
             HStack(spacing: 20) {
-                infoCard(title: "Average Price", value: String(format: "%.2f", stock.averagePrice), imageName: "dollarsign.circle.fill", color: .accentColor)
+                infoCard(title: "Average Price", value: "$\(String(format: "%.2f", stock.averagePrice))", imageName: "dollarsign.circle.fill", color: .accentColor)
                 infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .accentColor)
             }
         }
