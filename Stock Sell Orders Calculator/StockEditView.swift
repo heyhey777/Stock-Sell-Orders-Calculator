@@ -74,9 +74,12 @@ struct StockEditView: View {
             .navigationBarItems(trailing: Button("Cancel") {
                 dismiss()
             }
-                .foregroundColor(.accentColor)) 
+                .foregroundColor(.accentColor))
             .alert(isPresented: $showAlert) {
                 Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
+            }
+            .sheet(isPresented: $showingPurchaseView) {
+                PurchaseView()
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

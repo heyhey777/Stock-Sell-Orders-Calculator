@@ -16,9 +16,10 @@ class Store: ObservableObject {
     private var transactionListener: Task<Void, Error>?
     
     init() {
-        self.calculationsRemaining = UserDefaults.standard.integer(forKey: "calculationsRemaining")
-        if self.calculationsRemaining == 0 {
+        if UserDefaults.standard.object(forKey: "calculationsRemaining") == nil {
             self.calculationsRemaining = 30
+        } else {
+            self.calculationsRemaining = UserDefaults.standard.integer(forKey: "calculationsRemaining")
         }
         transactionListener = listenForTransactions()
         Task {
@@ -88,30 +89,30 @@ class Store: ObservableObject {
     }
     
     func purchase() async {
-           guard let product = products.first else {
-               errorMessage = "No product available"
-               return
-           }
-           
-           do {
-               let result = try await product.purchase()
-               
-               switch result {
-               case .success(let verification):
-                   let transaction = try await checkVerified(verification)
-                   await handlePurchase(transaction)
-                   await transaction.finish()
-               case .userCancelled:
-                   errorMessage = "Purchase cancelled"
-               case .pending:
-                   errorMessage = "Purchase pending"
-               @unknown default:
-                   errorMessage = "Unknown purchase result"
-               }
-           } catch {
-               errorMessage = "Purchase failed: \(error.localizedDescription)"
-           }
-       }
+        guard let product = products.first else {
+            errorMessage = "No product available"
+            return
+        }
+        
+        do {
+            let result = try await product.purchase()
+            
+            switch result {
+            case .success(let verification):
+                let transaction = try await checkVerified(verification)
+                await handlePurchase(transaction)
+                await transaction.finish()
+            case .userCancelled:
+                errorMessage = "Purchase cancelled"
+            case .pending:
+                errorMessage = "Purchase pending"
+            @unknown default:
+                errorMessage = "Unknown purchase result"
+            }
+        } catch {
+            errorMessage = "Purchase failed: \(error.localizedDescription)"
+        }
+    }
     
     func handlePurchase(_ transaction: Transaction) async {
         if transaction.productID == productId {
