@@ -41,17 +41,29 @@ struct StrategySettings: Codable, Identifiable {
     }
 }
 
+
 class StrategySettingsManager: ObservableObject {
-    @Published var currentSettings: StrategySettings
+    @Published var currentSettings: StrategySettings {
+        didSet {
+            saveCurrentSettings()
+        }
+    }
     @Published var savedSettings: [StrategySettings]
     
     private let maxSavedSettings = 3
     private let saveKey = "savedStrategySettings"
+    private let currentSettingsKey = "currentStrategySettings"
     
     @Published var showPurchaseView = false
     
     init() {
-        self.currentSettings = StrategySettings.default
+        if let savedCurrentSettings = UserDefaults.standard.object(forKey: currentSettingsKey) as? Data,
+           let decodedSettings = try? JSONDecoder().decode(StrategySettings.self, from: savedCurrentSettings) {
+            self.currentSettings = decodedSettings
+        } else {
+            self.currentSettings = StrategySettings.default
+        }
+        
         self.savedSettings = []
         loadSavedSettings()
     }
@@ -77,6 +89,12 @@ class StrategySettingsManager: ObservableObject {
     private func saveToDisk() {
         if let encoded = try? JSONEncoder().encode(savedSettings) {
             UserDefaults.standard.set(encoded, forKey: saveKey)
+        }
+    }
+    
+    private func saveCurrentSettings() {
+        if let encoded = try? JSONEncoder().encode(currentSettings) {
+            UserDefaults.standard.set(encoded, forKey: currentSettingsKey)
         }
     }
     

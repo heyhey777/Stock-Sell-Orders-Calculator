@@ -104,45 +104,58 @@ struct StrategySettingsView: View {
                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
         )
     }
-    
+
     private func targetSection(title: String, targets: Binding<[StrategySettings.Target]>, isStopLoss: Bool) -> some View {
-         VStack(alignment: .leading, spacing: 16) {
-             Text(title)
-                 .font(.title3)
-                 .fontWeight(.bold)
-             
-             ForEach(targets) { $target in
-                 TargetRow(target: $target, isStopLoss: isStopLoss, focusedField: _focusedField, onDelete: {
-                     withAnimation {
-                         targets.wrappedValue.removeAll { $0.id == target.id }
+             VStack(alignment: .leading, spacing: 16) {
+                 Text(title)
+                     .font(.title3)
+                     .fontWeight(.bold)
+                 
+                 ForEach(targets.wrappedValue, id: \.id) { target in
+                     TargetRow(target: binding(for: target, in: targets), isStopLoss: isStopLoss, focusedField: _focusedField, onDelete: {
+                         withAnimation {
+                             targets.wrappedValue.removeAll { $0.id == target.id }
+                             updateTotalAllocation()
+                         }
+                     }, onUpdate: {
                          updateTotalAllocation()
+                     })
+                 }
+                 
+                 if targets.wrappedValue.count < 3 {
+                     Button(action: {
+                         withAnimation {
+                             let newTarget = StrategySettings.Target(percentage: nil, allocation: nil)
+                             targets.wrappedValue.append(newTarget)
+                             focusedField = newTarget.id
+                         }
+                     }) {
+                         Label("Add Target", systemImage: "plus.circle.fill")
+                             .foregroundColor(.accentColor)
+                             .padding(.vertical, 8)
                      }
-                 }, onUpdate: {
-                     updateTotalAllocation()
-                 })
-             }
-             
-             if targets.wrappedValue.count < 3 {
-                 Button(action: {
-                     withAnimation {
-                         let newTarget = StrategySettings.Target(percentage: nil, allocation: nil)
-                         targets.wrappedValue.append(newTarget)
-                         focusedField = newTarget.id
-                     }
-                 }) {
-                     Label("Add Target", systemImage: "plus.circle.fill")
-                         .foregroundColor(.accentColor)
-                         .padding(.vertical, 8)
                  }
              }
+             .padding()
+             .background(
+                 RoundedRectangle(cornerRadius: 16)
+                     .fill(Color.customBackground)
+                     .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+             )
          }
-         .padding()
-         .background(
-             RoundedRectangle(cornerRadius: 16)
-                 .fill(Color.customBackground)
-                 .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
-         )
-     }
+         
+         private func binding(for target: StrategySettings.Target, in targets: Binding<[StrategySettings.Target]>) -> Binding<StrategySettings.Target> {
+             Binding<StrategySettings.Target>(
+                 get: {
+                     targets.wrappedValue.first { $0.id == target.id } ?? target
+                 },
+                 set: { newValue in
+                     if let index = targets.wrappedValue.firstIndex(where: { $0.id == target.id }) {
+                         targets.wrappedValue[index] = newValue
+                     }
+                 }
+             )
+         }
      
     private var presetsSection: some View {
         VStack(alignment: .leading, spacing: 16) {
