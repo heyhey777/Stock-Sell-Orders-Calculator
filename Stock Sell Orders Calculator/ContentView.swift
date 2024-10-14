@@ -48,6 +48,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showingPurchaseView) {
             PurchaseView()
+                .environmentObject(store)
         }
     }
     
