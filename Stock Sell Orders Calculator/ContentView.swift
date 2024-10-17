@@ -154,7 +154,7 @@ struct ContentView: View {
         HStack {
             Image(systemName: "pencil")
                 .foregroundColor(.accentColor)
-                .imageScale(.large)
+              //  .imageScale(.large)
             
             Text("Strategy settings")
                 .font(.body)
