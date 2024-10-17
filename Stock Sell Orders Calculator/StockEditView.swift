@@ -28,11 +28,11 @@ struct StockEditView: View {
                 Color.appBackground.edgesIgnoringSafeArea(.all)
                 
                 ScrollView {
-                    VStack(spacing: 20) {
-                        inputField(title: "Stock Name", placeholder: "Enter stock name (not mandatory)", binding: $tempStock.name)
+                    VStack(spacing: 24) {
+                        inputField(title: "Stock Name", placeholder: "Enter stock name (optional)", binding: $tempStock.name, imageName: "tag")
                             .focused($focusedField, equals: .stockName)
                         
-                        inputField(title: "Average Price, $", placeholder: "Enter average price", binding: $averagePriceString)
+                        inputField(title: "Average Price", placeholder: "Enter average price", binding: $averagePriceString, imageName: "dollarsign")
                             .focused($focusedField, equals: .averagePrice)
                             .keyboardType(.decimalPad)
                             .onChange(of: averagePriceString) { newValue in
@@ -41,7 +41,7 @@ struct StockEditView: View {
                                 }
                             }
                         
-                        inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: $sharesAmountString)
+                        inputField(title: "Shares Amount", placeholder: "Enter shares amount", binding: $sharesAmountString, imageName: "basket")
                             .focused($focusedField, equals: .sharesAmount)
                             .keyboardType(.decimalPad)
                             .onChange(of: sharesAmountString) { newValue in
@@ -50,33 +50,23 @@ struct StockEditView: View {
                                 }
                             }
                         
-                        Button(action: continueAction) {
-                            Text("Save Changes")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(Color.accentColor)
-                                .cornerRadius(12)
-                        }
-                        .padding(.top, 20)
+                        saveButton
                         
-                        Button(action: clearFields) {
-                            Text("Clear")
-                                .foregroundColor(.accentColor)
-                        }
-                        .padding(.top, 10)
+                        clearButton
                     }
-                    .padding()
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
+                    .padding(.bottom, 40)
                 }
             }
             .navigationBarTitle("Edit Stock", displayMode: .inline)
             .navigationBarItems(trailing: Button("Cancel") {
                 dismiss()
-            }
-                .foregroundColor(.accentColor))
+            })
             .alert(isPresented: $showAlert) {
-                Alert(title: Text("Missing Information"), message: Text("Please fill in all required fields (Average Price and Shares Amount)."), dismissButton: .default(Text("OK")))
+                Alert(title: Text("Missing Information"),
+                      message: Text("Please fill in all required fields (Average Price and Shares Amount)."),
+                      dismissButton: .default(Text("OK")))
             }
             .sheet(isPresented: $showingPurchaseView) {
                 PurchaseView()
@@ -85,20 +75,49 @@ struct StockEditView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
     
-    private func inputField(title: String, placeholder: String, binding: Binding<String>) -> some View {
+    private func inputField(title: String, placeholder: String, binding: Binding<String>, imageName: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
                 .font(.headline)
+                .foregroundColor(.primary)
             
-            TextField(placeholder, text: binding)
-                .padding()
-                .background(Color(UIColor.systemBackground))
-                .cornerRadius(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                )
+            HStack {
+                Image(systemName: imageName)
+                    .foregroundColor(.secondary)
+                    .frame(width: 24, height: 24)
+                
+                TextField(placeholder, text: binding)
+                    .font(.body)
+            }
+            .padding()
+            .background(Color.secondarySystemBackground)
+            .cornerRadius(10)
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(Color.secondary.opacity(0.2), lineWidth: 1)
+            )
         }
+    }
+    
+    private var saveButton: some View {
+        Button(action: continueAction) {
+            Text("Save Changes")
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(maxWidth: .infinity)
+                .padding()
+                .background(Color.accentColor)
+                .cornerRadius(12)
+        }
+        .padding(.top, 20)
+    }
+    
+    private var clearButton: some View {
+        Button(action: clearFields) {
+            Text("Clear")
+                .foregroundColor(.accentColor)
+        }
+        .padding(.top, 10)
     }
     
     private func continueAction() {
@@ -130,4 +149,8 @@ struct StockEditView: View {
         defaults.set(stock.averagePrice, forKey: "stockAveragePrice")
         defaults.set(stock.sharesAmount, forKey: "stockSharesAmount")
     }
+}
+
+extension Color {
+    static let secondarySystemBackground = Color(UIColor.secondarySystemBackground)
 }
