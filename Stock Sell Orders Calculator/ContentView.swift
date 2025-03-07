@@ -90,7 +90,7 @@ struct ContentView: View {
             
             HStack(spacing: 20) {
                 infoCard(title: "Average Price", value: "$\(String(format: "%.2f", stock.averagePrice))", imageName: "dollarsign.circle.fill", color: .accentColor)
-                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount)", imageName: "basket.fill", color: .accentColor)
+                infoCard(title: "Shares Amount", value: "\(stock.sharesAmount.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(stock.sharesAmount)) : String(stock.sharesAmount))", imageName: "basket.fill", color: .accentColor)
             }
         }
         .padding()
@@ -222,13 +222,13 @@ struct ContentView: View {
             sharesToSell = 0
         }
         
-        let sharesToSellFormatted = sharesToSell.truncatingRemainder(dividingBy: 1) == 0 ? String(format: "%.0f", sharesToSell) : String(format: "%.1f", sharesToSell)
+        let sharesToSellFormatted = sharesToSell.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(sharesToSell)) : String(sharesToSell)
 
         return VStack(alignment: .leading, spacing: 4) {
             Text("Sell \(sharesToSellFormatted) shares at $\(String(format: "%.2f", targetPrice))")
                 .font(.title3)
                 .fontWeight(.medium)
-            Text("\(target.percentage.map { String(format: "%.1f", $0) } ?? "N/A")% \(isProfit ? "gain" : "loss"), \(target.allocation.map { String(format: "%.1f", $0) } ?? "N/A")% of position")
+            Text("\(target.percentage.map { $0.truncatingRemainder(dividingBy: 1) == 0 ? String(Int($0)) : String($0) } ?? "N/A")% \(isProfit ? "gain" : "loss"), \(target.allocation.map { $0.truncatingRemainder(dividingBy: 1) == 0 ? String(Int($0)) : String($0) } ?? "N/A")% of the shares amount")
                 .font(.caption)
                 .foregroundColor(.secondary)
         }

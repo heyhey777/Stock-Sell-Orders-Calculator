@@ -21,9 +21,9 @@ struct StrategySettingsView: View {
                     VStack(spacing: 12) {
                         totalAllocationCard
                         
-                        targetSection(title: "Profit Taking Targets", targets: $settingsManager.currentSettings.profitTakingTargets, isStopLoss: false)
+                        targetSection(title: "Profit-Taking Targets", targets: $settingsManager.currentSettings.profitTakingTargets, isStopLoss: false)
                         
-                        targetSection(title: "Stop Loss Targets", targets: $settingsManager.currentSettings.stopLossTargets, isStopLoss: true)
+                        targetSection(title: "Stop-Loss Limits", targets: $settingsManager.currentSettings.stopLossTargets, isStopLoss: true)
                         
                         presetsSection
                         
@@ -92,7 +92,7 @@ struct StrategySettingsView: View {
             Text("Total Allocation")
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Text(String(format: "%.2f", totalAllocation).replacingOccurrences(of: ".00", with: "") + "%")
+            Text((totalAllocation.truncatingRemainder(dividingBy: 1) == 0 ? String(Int(totalAllocation)) : String(totalAllocation)) + "%")
                 .font(.system(size: 36, weight: .bold, design: .rounded))
                 .foregroundColor(totalAllocation > 100 ? .red : .primary)
         }
