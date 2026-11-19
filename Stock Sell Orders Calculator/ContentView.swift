@@ -204,8 +204,17 @@ struct ContentView: View {
                 .font(.caption2)
                 .foregroundStyle(.gray)
                 .padding()
+
+            // Privacy policy (Apple 5.1.1(i): reachable inside the app)
+            Link("Privacy Policy", destination: Self.privacyPolicyURL)
+                .font(.footnote)
+                .padding(.vertical, 8)
+                .padding(.horizontal, 16)
         }
     }
+
+    /// Same URL as the Privacy Policy field in App Store Connect.
+    static let privacyPolicyURL = URL(string: "https://docs.google.com/document/d/1dEMPyv3SHQuIymrvrHTyc26zsQRvs-N_YQWfPVRX7Z4/edit")!
     
     private func targetRow(for target: StrategySettings.Target, isProfit: Bool) -> some View {
         let targetPrice: Double
